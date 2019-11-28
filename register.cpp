@@ -1,18 +1,16 @@
-#ifndef REGISTER
-#define REGISTER
 
+#include <iostream>
 #include <string>
 #include <fstream>
 using namespace std;
 
-
+struct RegisterNode {
+    string name;
+    int value;
+    RegisterNode* next;
+};
 class Register {
-protected:
-    struct RegisterNode {
-        string name;
-        int value;
-        RegisterNode* next;
-    };
+private:
     string linkFile;
     RegisterNode* root;
 public:
@@ -66,4 +64,3 @@ int Register::getRegisterValue(string registerName) {
         seeker = seeker->next;
     }
 }
-#endif
