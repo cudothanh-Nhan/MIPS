@@ -4,19 +4,23 @@
 
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
+// Regular Expression
 
-string extractRs(string _instruction);
-string extractRt(string _instruction);
-string extractRd(string _instrution);
-string extractName(string _instruction);
+
+#pragma region INSTRUCTION_INTERFACE
 class Instruction {
 protected:
 public:
+    static string extractName(string _instruction);
     Instruction(){};
+    virtual void init(string _instruction) = 0;
     virtual void execute() = 0;
     virtual string getName() = 0;
     virtual ~Instruction(){}
 };
+#pragma endregion END
+
+#pragma region FORMAT_INTERFACE
 class R_Format : public Instruction {
 protected:
     string rs;
@@ -24,21 +28,24 @@ protected:
     string rd;
     const string NAME;
 public:
+    static string extractR(string _instruction);
     R_Format();
     R_Format(string _name) : NAME(_name){}
+    void init(string _instruction);
     virtual string getName() = 0;
     virtual void execute() = 0;
-    virtual R_Format* checkNext(string) = 0;
     virtual ~R_Format(){}
 };
+void R_Format::init(string _instruction) {}
+#pragma endregion END
 
+#pragma region COMMAND_INTERFACE 
 class Add : public R_Format {
 protected:
 public:
     Add();
     string getName();
     void execute();
-    R_Format* checkNext(string);
     ~Add();
 };
 
@@ -48,12 +55,23 @@ public:
     Subtract();
     string getName();
     void execute();
-    R_Format* checkNext(string);
     ~Subtract();
 };
 
-// IMPLEMENT CLASS------------------------------------------------------------
-string extractName(string _instruction){
+
+class And : public R_Format {
+protected:
+public:
+    And();
+    string getName();
+    void execute();
+    ~And();
+};
+
+#pragma endregion END
+
+#pragma region IMPLEMENT_COMMAND
+string Instruction::extractName(string _instruction){
     char name[10];
     int spaceCount = 0;
     int index = 0;
@@ -72,44 +90,34 @@ string Add::getName(){
     return this->NAME;
 }
 void Add::execute(){}
-R_Format* Add::checkNext(string _instruction){
-    string _name = extractName(_instruction);
-    if(!NAME.compare(_name)) {
-        return new Add;
-    }
-    else {
-        return Subtract().checkNext(_name);
-    }  
-}
-Add::~Add(){       
-    cout << "Destructor A called\n";
-}
+Add::~Add(){}
 
 Subtract::Subtract() : R_Format("substract"){}
 string Subtract::getName(){
     return this->NAME;
 }
 void Subtract::execute(){}
-Subtract::~Subtract(){       
-    cout << "Destructor B called\n";
+Subtract::~Subtract(){}
+And::And() : R_Format("and"){}
+string And::getName(){
+    return this->NAME;
 }
-R_Format* Subtract::checkNext(string _name){
-    if(!NAME.compare(_name)) {
-        return new Subtract;
-    }
-    else {
-        return nullptr;
-    }
+void And::execute(){}
+And::~And(){}
+#pragma endregion END
+
+Instruction* navigationCommand(string _instruction){
+    string name = Instruction::extractName(_instruction);
+    cout << "Name: " << name << '\n';
+    if(!name.compare("add")) return new Add;
+    else if(!name.compare("subtract")) return new Subtract;
+    else if(!name.compare("and")) return new And;
+    else return nullptr;
 }
 
-R_Format* navigationCommand(string _instruction){
-    string name = extractName(_instruction);
-    return Add().checkNext(name);
-}
 // Replace int main() with int process()
 int main(){
-
-    string instruction = "substract 123";
+    string instruction = "add $t0, $t1, $t2";
     Instruction* ptr = navigationCommand(instruction);
     if(ptr != nullptr) 
         cout << "The Name of instruction is: " << ptr->getName();
