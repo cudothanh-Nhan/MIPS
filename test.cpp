@@ -3,20 +3,10 @@
 #include "register.h"
 #include "Serial.h"
 using namespace std;
+static Register reg("registerList.txt");
 
 int main() {
-    Serial cmd;
-    cmd.init();
-    cmd.pause();
-    if(cmd.write("$ra", 100) == 1){
-        cmd.init();
-    }
-    cmd.pause();
-    if(cmd.write("$fp", 100) == 1){
-        cmd.init();
-    }
-    cmd.pause();
-    if(cmd.write("$ra", 100) == 1){
-        cmd.init();
-    }  
+   int a = 10;
+   void* ptr = &a;
+   cout << *
 }

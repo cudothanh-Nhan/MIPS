@@ -17,6 +17,7 @@ protected:
     string linkFile;
     RegisterNode* root;
 public:
+    Register();
     Register(string _linkFile);
     void init();
     void setRegisterValue(string registerName, int value);
@@ -67,4 +68,5 @@ int Register::getRegisterValue(string registerName) {
         seeker = seeker->next;
     }
 }
+
 #endif

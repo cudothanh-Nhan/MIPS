@@ -4,13 +4,14 @@
 #include <fstream>
 using namespace std;
 
-struct RegisterNode {
-    string name;
-    int value;
-    RegisterNode* next;
-};
+
 class Register {
-private:
+protected:
+    struct RegisterNode {
+        string name;
+        int value;
+        RegisterNode* next;
+    };
     string linkFile;
     RegisterNode* root;
 public:
@@ -63,4 +64,11 @@ int Register::getRegisterValue(string registerName) {
         }
         seeker = seeker->next;
     }
+}
+int main() {
+    Register reg("registerList.txt");
+    reg.init();
+    cout << reg.getRegisterValue("$t1");
+    reg.setRegisterValue("$t1", 10);
+    cout << reg.getRegisterValue("$t1");
 }
