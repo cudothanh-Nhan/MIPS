@@ -6,22 +6,23 @@
 #include <fstream>
 using namespace std;
 
-
 class Register {
 protected:
     struct RegisterNode {
         string name;
         int value;
+        int* address;
         RegisterNode* next;
     };
     string linkFile;
     RegisterNode* root;
 public:
-    Register();
     Register(string _linkFile);
     void init();
+    void setRegisterAddress(string registerName, int* ptr);
     void setRegisterValue(string registerName, int value);
     int getRegisterValue(string registerName);
+    int* getAddressValue(string registerName);
 };
 
 Register::Register(string _linkFile) {
@@ -36,6 +37,7 @@ void Register::init() {
     while(!registerList.eof()) {
         RegisterNode* newNode = new RegisterNode;
         newNode->value = 0;
+        newNode->address = nullptr;
         registerList >> newNode->name;
         if(countRegister == 1) {
             root = newNode;
@@ -48,12 +50,34 @@ void Register::init() {
         }
     }
 }
+void Register::setRegisterAddress(string registerName, int* ptr) {
+    RegisterNode* seeker;
+    seeker = root;
+    while(seeker->next != nullptr) {
+        if(!seeker->name.compare(registerName)) {
+            seeker->address = ptr;
+            seeker->value = (int)seeker->address;
+        }
+        seeker = seeker->next;
+    }
+}
 void Register::setRegisterValue(string registerName, int _value) {
     RegisterNode* seeker;
     seeker = root;
     while(seeker->next != nullptr) {
         if(!seeker->name.compare(registerName)) {
             seeker->value = _value;
+            seeker->address = nullptr;
+        }
+        seeker = seeker->next;
+    }
+}
+int* Register::getAddressValue(string registerName) {
+    RegisterNode* seeker;
+    seeker = root;
+    while(seeker->next != nullptr) {
+        if(!seeker->name.compare(registerName)) {
+            return seeker->address;
         }
         seeker = seeker->next;
     }
@@ -68,5 +92,4 @@ int Register::getRegisterValue(string registerName) {
         seeker = seeker->next;
     }
 }
-
 #endif

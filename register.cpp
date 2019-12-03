@@ -18,6 +18,7 @@ protected:
 public:
     Register(string _linkFile);
     void init();
+    void setRegisterAddress(string registerName, int* ptr);
     void setRegisterValue(string registerName, int value);
     int getRegisterValue(string registerName);
     int* getAddressValue(string registerName);
@@ -48,12 +49,24 @@ void Register::init() {
         }
     }
 }
+void Register::setRegisterAddress(string registerName, int* ptr) {
+    RegisterNode* seeker;
+    seeker = root;
+    while(seeker->next != nullptr) {
+        if(!seeker->name.compare(registerName)) {
+            seeker->address = ptr;
+            seeker->value = (int)seeker->address;
+        }
+        seeker = seeker->next;
+    }
+}
 void Register::setRegisterValue(string registerName, int _value) {
     RegisterNode* seeker;
     seeker = root;
     while(seeker->next != nullptr) {
         if(!seeker->name.compare(registerName)) {
             seeker->value = _value;
+            seeker->address = nullptr;
         }
         seeker = seeker->next;
     }
@@ -81,9 +94,9 @@ int Register::getRegisterValue(string registerName) {
 int main() {
     Register reg("registerList.txt");
     reg.init();
-    cout << reg.getRegisterValue("$t1");
+    int a = 10;
+    cout << dec << &a << '\n';
+    reg.setRegisterAddress("$t1",&a);
     reg.setRegisterValue("$t1", 10);
-    cout << reg.getRegisterValue("$t1") << '\n';
-    cout << *(reg.getAddressValue("$t1"));
-
+    if(reg.getAddressValue("$t1") == nullptr) cout << "ys";
 }
