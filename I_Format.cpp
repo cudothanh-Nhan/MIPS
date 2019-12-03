@@ -214,13 +214,13 @@ I_Format* navigationCommand(string _instruction) {
 
 // Replace int main() with int process()
 int main() {
-	string instruction = "li $a1, 90";
-    string name = extractName(instruction);
-	cout << name << endl;
-	name = extractRs(instruction);
-	cout << name << endl;
-	name = extractRt(instruction);
-	cout << name << endl;
+	string instruction = "li (90)";
+    // string name = extractName(instruction);
+	// cout << name << endl;
+	// name = extractRs(instruction);
+	// cout << name << endl;
+	// name = extractRt(instruction);
+	// cout << name << endl;
 	int num = extractImm(instruction);
 	cout << num;
 	Instruction* ptr = navigationCommand(instruction);
