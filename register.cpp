@@ -10,6 +10,7 @@ protected:
     struct RegisterNode {
         string name;
         int value;
+        int* address;
         RegisterNode* next;
     };
     string linkFile;
@@ -19,6 +20,7 @@ public:
     void init();
     void setRegisterValue(string registerName, int value);
     int getRegisterValue(string registerName);
+    int* getAddressValue(string registerName);
 };
 
 Register::Register(string _linkFile) {
@@ -33,6 +35,7 @@ void Register::init() {
     while(!registerList.eof()) {
         RegisterNode* newNode = new RegisterNode;
         newNode->value = 0;
+        newNode->address = nullptr;
         registerList >> newNode->name;
         if(countRegister == 1) {
             root = newNode;
@@ -55,6 +58,16 @@ void Register::setRegisterValue(string registerName, int _value) {
         seeker = seeker->next;
     }
 }
+int* Register::getAddressValue(string registerName) {
+    RegisterNode* seeker;
+    seeker = root;
+    while(seeker->next != nullptr) {
+        if(!seeker->name.compare(registerName)) {
+            return seeker->address;
+        }
+        seeker = seeker->next;
+    }
+}
 int Register::getRegisterValue(string registerName) {
     RegisterNode* seeker;
     seeker = root;
@@ -70,5 +83,7 @@ int main() {
     reg.init();
     cout << reg.getRegisterValue("$t1");
     reg.setRegisterValue("$t1", 10);
-    cout << reg.getRegisterValue("$t1");
+    cout << reg.getRegisterValue("$t1") << '\n';
+    cout << *(reg.getAddressValue("$t1"));
+
 }
