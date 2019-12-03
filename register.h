@@ -56,7 +56,7 @@ void Register::setRegisterAddress(string registerName, int* ptr) {
     while(seeker->next != nullptr) {
         if(!seeker->name.compare(registerName)) {
             seeker->address = ptr;
-            seeker->value = (int)seeker->address;
+            seeker->value = *(int*)(&seeker->address);
         }
         seeker = seeker->next;
     }
@@ -81,6 +81,7 @@ int* Register::getAddressValue(string registerName) {
         }
         seeker = seeker->next;
     }
+    return nullptr;
 }
 int Register::getRegisterValue(string registerName) {
     RegisterNode* seeker;
@@ -91,5 +92,6 @@ int Register::getRegisterValue(string registerName) {
         }
         seeker = seeker->next;
     }
+    return 0;
 }
 #endif
