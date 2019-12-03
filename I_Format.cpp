@@ -2,19 +2,28 @@
 #include <iomanip>
 #include <string.h>
 #include <math.h>
+#include "register.h"
+#include "getNumber.h"
+#include "getRegister.h"
+#include "getWord.h"
+#include "serial.h"
 
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
 
+static Register reg("registerList.txt");
+Serial cmd;
 #pragma region Prototype
-string extractRs(string _instruction);
-string extractRt(string _instruction);
-int extractImm(string _instrution);
-string extractName(string _instruction);
+// string extractRs(string _instruction);
+// string extractRt(string _instruction);
+// int extractImm(string _instrution);
+// string extractName(string _instruction);
 class Instruction {
 protected:
 public:
+	static string extractName(string _instruction);
 	Instruction() {};
+	virtual void init(string _instruction) = 0;
 	virtual void execute() = 0;
 	virtual string getName() = 0;
 	virtual ~Instruction() {}
@@ -23,210 +32,203 @@ class I_Format : public Instruction {
 protected:
 	string rs;
 	string rt;
-	string adress;
+	int imm;
 	const string NAME;
 public:
 	I_Format();
 	I_Format(string _name) : NAME(_name) {}
 	virtual string getName() = 0;
 	virtual void execute() = 0;
-	virtual I_Format* checkNext(string) = 0;
 	virtual ~I_Format() {}
+	void init(string _instruction);
 };
 
 #pragma endregion Prototype
 
-#pragma region extractInput
-string extractName(string _instruction) {
-	char name[10];
-	int spaceCount = 0;
-	int index = 0;
-	while (1) {
-		if (_instruction[index] != 32) {
-			name[index] = _instruction[index];
-		}
-		else break;
-		index++;
-	}
-	name[index] = '\0';
-	return name;
+#pragma region init I-Format
+
+void I_Format::init(string _instruction){
+	rs = getRegister(_instruction, 1);
+	rt = getRegister(_instruction, 2);
+	imm = getNumbers(_instruction);
 }
-string extractRs(string _instruction) {
-	char rs[5];
-	int index = 0;
-	int count = 0;
-	while (1) {
-		if (_instruction[index] == '$') {
-			while ((_instruction[index + count] != ' ') && (_instruction[index + count] != ',')) {
-				rs[count] = _instruction[index + count];
-				count++;
-			}
-			break;
-		}
-		index++;
-	}
-	rs[count] = '\0';
-	return rs;
-}
-string extractRt(string _instruction) {
-	char rt[5];
-	int index = 0;
-	int count = 0;
-	while (_instruction[index] != '$') index++;
-	index++;
-	while (1) {
-		if (_instruction[index] == '$') {
-			while (1){
-				rt[count] = _instruction[index + count];
-				count++;
-				if ((_instruction[index + count] == ' ') || (_instruction[index + count] == ',') || (_instruction[index + count] == ')')) break;
-			}
-			break;
-		}
-		index++;
-	}
-	rt[count] = '\0';
-	return rt;
-}
-int extractImm(string _instruction) {
-	char imm[100];
-	int num = 0;
-	int index = 0;
-	int count = 0;
-	bool dau = false;
-	while (1) {
-		if (((int(_instruction[index]) >= 48)) && (int(_instruction[index] <= 57))) {
-			if ((_instruction[index - 1] == ' ') || (_instruction[index - 1] == ',') || (_instruction[index - 1] == '-')) {
-				if (_instruction[index - 1] == '-') dau = true;
-				while (1) {
-					imm[count] = _instruction[index + count];
-					count++;
-					if ((_instruction[index + count] == '\0') || (_instruction[index + count] == ' ') || (_instruction[index + count] == '(')) break;
-				}
-			}
-		}
-		if (count != 0) break;
-		index++;
-	}
-	for (int i = count - 1; i >= 0; i--) {
-			num += (int(imm[i]) - 48) * pow(10, count - i - 1);
-	}
-	if (dau == true) num = -num;
-	return num;
-}
-#pragma endregion extractInput
+
+#pragma endregion init I-Format
 
 #pragma region Prototype Subclass
 
-class lw : public I_Format {
+class Addi : public I_Format {
+protected:
+public:
+	Addi();
+	string getName();
+	void execute();
+	~Addi();
+};
+
+class Andi : public I_Format {
+protected:
+public:
+	Andi();
+	string getName();
+	void execute();
+	~Andi();
+};
+
+class Ori : public I_Format {
+protected:
+public:
+	Ori();
+	string getName();
+	void execute();
+	~Ori();
+};
+class Slti : public I_Format {
+protected:
+public:
+	Slti();
+	string getName();
+	void execute();
+	~Slti();
+};
+
+class Li : public I_Format {
+protected:
+public:
+	Li();
+	string getName();
+	void execute();
+	~Li();
+};
+class Lw : public I_Format {
 protected:
 public:
 	Lw();
 	string getName();
 	void execute();
-	I_Format* checkNext(string);
 	~Lw();
 };
 
-class sw : public I_Format {
-protected:
-public:
-	sw();
-	string getName();
-	void execute();
-	I_Format* checkNext(string);
-	~sw();
-};
-
-class addi : public I_Format {
-protected:
-public:
-	addi();
-	string getName();
-	void execute();
-	I_Format* checkNext(string);
-	~addi();
-};
 #pragma endregion Prototype Subclass
 
-#pragma region lw
+#pragma region Addi
 
+Addi::Addi() : I_Format("addi") {}
+string Addi::getName() {
+	return this->NAME;
+}
+void Addi::execute() {
+	int temp;
+	temp = reg.getRegisterValue(rt) + imm;
+	reg.setRegisterValue(rs, temp);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Addi::~Addi() {
+	cout << "Destructor Addi called\n";
+}
+
+#pragma endregion Addi
+
+#pragma region Andi
+Andi::Andi() : I_Format("andi") {}
+string Andi::getName() {
+	return this->NAME;
+}
+void Andi::execute() {
+	int temp;
+	temp = reg.getRegisterValue(rt) & imm;
+	reg.setRegisterValue(rs, temp);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Andi::~Andi() {
+	cout << "Destructor Andi called\n";
+}
+#pragma endregion Andi
+
+#pragma region Ordi
+Ori::Ori() : I_Format("ori") {}
+string Ori::getName() {
+	return this->NAME;
+}
+void Ori::execute() {
+	int temp;
+	temp = reg.getRegisterValue(rt) | imm;
+	reg.setRegisterValue(rs, temp);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Ori::~Ori() {
+	cout << "Destructor Ori called\n";
+}
+#pragma endregion Ordi
+
+#pragma region Slti
+Slti::Slti() : I_Format("slti") {}
+string Slti::getName() {
+	return this->NAME;
+}
+void Slti::execute() {
+	int temp;
+	if (reg.getRegisterValue(rt) < imm) reg.setRegisterValue(rs, 1);
+	else reg.setRegisterValue(rs,0);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Slti::~Slti() {
+	cout << "Destructor Slti called\n";
+}
+#pragma endregion Slti
+
+#pragma region Li
+Li::Li() : I_Format("li") {}
+string Li::getName() {
+	return this->NAME;
+}
+void Li::execute() {
+	reg.setRegisterValue(rs, imm);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Li::~Li() {
+	cout << "Destructor Li called\n";
+}
+#pragma endregion Li
+
+#pragma region Lw
 Lw::Lw() : I_Format("lw") {}
 string Lw::getName() {
 	return this->NAME;
 }
-void Lw::execute() {}
-I_Format* Lw::checkNext(string _instruction) {
-	string _name = extractName(_instruction);
-	if (!NAME.compare(_name)) {
-		return new Lw;
-	}
-	else {
-		return sw().checkNext(_name);
-	}
+void Lw::execute() {
+	// int temp;
+	// temp = reg.getAddressValue | imm;
+	// reg.setRegisterValue(rs, temp);
+	// cmd.write(rs, reg.getRegisterValue(rs));
 }
-lw::~lw() {
-	cout << "Destructor A called\n";
+Lw::~Lw() {
+	cout << "Destructor Ordi called\n";
 }
 
-#pragma endregion lw
-
-#pragma region sw
-
-sw::sw() : I_Format("sw") {}
-string sw::getName() {
-	return this->NAME;
-}
-void sw::execute() {}
-sw::~sw() {
-	cout << "Destructor B called\n";
-}
-I_Format* sw::checkNext(string _name) {
-	if (!NAME.compare(_name)) {
-		return new sw;
-	}
-	else {
-		return addi().checkNext(_name);
-	}
-}
-
-#pragma endregion sw
-
-#pragma region addi
-
-void addi::execute() {}
-I_Format* addi::checkNext(string _name) {
-    if (!NAME.compare(_name)) {
-		return new sw;
-	}
-	else {
-		return nullptr;
-	}
-}
-
+#pragma endregion Lw
 I_Format* navigationCommand(string _instruction) {
-	string name = extractName(_instruction);
-	return lw().checkNext(name);
+	string name = getWord(_instruction, 1);
+	cout << "Name: " << name << '\n';
+    if(!name.compare("addi")) return new Addi;
+    else if(!name.compare("andi")) return new Andi;
+    else if(!name.compare("ori")) return new Ori;
+	else if(!name.compare("slti")) return new Slti;	
+	else if(!name.compare("li")) return new Li;
+    else return nullptr;
 }
 
-#pragma endregion addi
 
 
 // Replace int main() with int process()
 int main() {
-	string instruction = "li (90)";
-    // string name = extractName(instruction);
-	// cout << name << endl;
-	// name = extractRs(instruction);
-	// cout << name << endl;
-	// name = extractRt(instruction);
-	// cout << name << endl;
-	int num = extractImm(instruction);
-	cout << num;
+	string instruction = "li $t1, 19002901";
 	Instruction* ptr = navigationCommand(instruction);
-	if (ptr != nullptr)
-		cout << "The Name of instruction is: " << ptr->getName();
-	else
-		cout << "Invalid instruction";
+	reg.init();
+	ptr->init(instruction);
+	cmd.init();
+	cmd.pause();
+	ptr->execute();
+	cmd.init();
     return 0;
 }
