@@ -12,6 +12,7 @@ using namespace std;
 // Regular Expression
 
 static Register reg("registerList.txt");
+static Serial cmd;
 #pragma region INSTRUCTION_INTERFACE
 class Instruction {
 protected:
@@ -30,7 +31,7 @@ protected:
     string rd;
     string rs;
     string rt;
-
+    int shamt;
     const string NAME;
 public:
     R_Format(string _name) : NAME(_name){}
@@ -41,8 +42,9 @@ public:
 };
 void R_Format::init(string _instruction) {
     rd = getRegister(_instruction, 1);
-    rs = getRegister(_instruction, 2);
-    rt = getRegister(_instruction, 3);
+    rt = getRegister(_instruction, 2);
+    rs = getRegister(_instruction, 3);
+    shamt = getNumbers(_instruction);
 }
 #pragma endregion END
 
@@ -74,6 +76,14 @@ public:
     void execute();
     ~And();
 };
+class Sll : public R_Format {
+protected:
+public:
+    Sll();
+    string getName();
+    void execute();
+    ~Sll();
+};
 
 #pragma endregion END
 
@@ -94,12 +104,24 @@ string Subtract::getName(){
 }
 void Subtract::execute(){}
 Subtract::~Subtract(){}
+
 And::And() : R_Format("and"){}
 string And::getName(){
     return this->NAME;
 }
 void And::execute(){}
 And::~And(){}
+
+Sll::Sll() : R_Format("sll"){}
+string Sll::getName(){
+    return this->NAME;
+}
+void Sll::execute(){
+    int temp = reg.getRegisterValue(rt) * pow(2, shamt);
+    reg.setRegisterValue(rd, temp);
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Sll::~Sll(){}
 #pragma endregion END
 
 
@@ -109,34 +131,25 @@ Instruction* navigationCommand(string _instruction){
     if(!name.compare("add")) return new Add;
     else if(!name.compare("subtract")) return new Subtract;
     else if(!name.compare("and")) return new And;
+    else if(!name.compare("sll")) return new Sll;
     else return nullptr;
 }
-
+void setup() {
+    cmd.init();
+    reg.init();
+}
+void printToConsole() {
+    cmd.init();
+    cmd.pause();
+}
 // Replace int main() with int process()
 int main(){
-    Serial cmd;
-    cmd.init();
-    system("pause");
-    reg.init();
-    string instruction = "add $t0, $t1, $t2";
+    setup();
+    reg.setRegisterValue("$a1", 10);
+    string instruction = "sll $a0, $a1, 3";
     Instruction* ptr = navigationCommand(instruction);
     ptr->init(instruction);
-
-    reg.setRegisterValue("$t1", 10);
-    cmd.write("$t1", 10);
-    cmd.init();
-    system("pause");
-    reg.setRegisterValue("$t2", 17);
-    cmd.write("$t2", 17);
-    cmd.init();
-    system("pause");
     ptr->execute();
-    cmd.write("$t0", reg.getRegisterValue("$t0"));
-    cmd.init();
-    system("pause");
-    // if(ptr != nullptr) 
-    //     cout << "The Name of instruction is: " << ptr->getName();
-    // else
-    //     cout << "Invalid instruction";
+    cout << reg.getRegisterValue("$a0");
 }
 
