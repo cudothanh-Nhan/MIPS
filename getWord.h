@@ -1,3 +1,6 @@
+#ifndef GET_WORD
+#define GET_WORD
+
 #include <string>
 #include <sstream>
 
@@ -17,3 +20,4 @@ string getWord(string _name, int n) {
     } 
     return "";
 }
+#endif
