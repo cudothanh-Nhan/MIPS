@@ -1,8 +1,10 @@
+#ifndef GETTEXT
+#define GETTEXT
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <string.h>
-#include "getWord.h"
+#include "getWord.h"	
 using namespace std;
 
 class FileAssembly {
@@ -20,14 +22,16 @@ public:
 			if (int(temp.find(".text")) >= 0){
 				while (!fileIn.eof()){
 					getline(fileIn, temp);
-                    if (!((getWord(temp, 1) == "") || (getWord(temp,2) == ""))){
-                        text[i] = temp;
-                        if (int(text[i].find(":")) != 0){
-                            for (int j = 0; j <= i; j++){
-                                text[i][j] = ' ';
+                    if (!(getWord(temp, 1) == "")){
+                        if (!(getWord(temp,2) == "")){
+                            text[i] = temp;
+                            if (int(text[i].find(":")) >= 0){
+                                for (int j = 0; j <= int(text[i].find(":")); j++){
+                                    text[i][j] = ' ';
+                                }
                             }
+                            i++;
                         }
-                        i++;
                     }
 				}
 				numberOfInstruction = i;
@@ -43,10 +47,13 @@ string FileAssembly::getInstruction(int address){
 	if (address/4 < numberOfInstruction) return text[address/4];
 	else return "DEO CO DAU MA KIEM";
 }
-int main(){
-	FileAssembly input("assembly.txt");
-	int t;
-	cin >> t;
-	cout << input.getInstruction(t);
-	return 0;
-}
+// int main(){
+// 	FileAssembly input("assembly.txt");
+// 	int t = -1;
+//     do{
+// 	    cin >> t;
+// 	    cout << input.getInstruction(t) << endl;
+//     } while(t != -1);
+// 	return 0;
+// }
+#endif
