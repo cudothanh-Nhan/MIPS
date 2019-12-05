@@ -1,23 +1,53 @@
-#include <iostream>
-#include <string>
+#ifndef GETTEXT
+#define GETTEXT
 #include <fstream>
-#include "getWord.h"
+#include <iostream>
+#include <math.h>
+#include <string.h>
+#include "getWord.h"	
 using namespace std;
 
 class FileAssembly {
 protected:
-    string linkFile;
     struct Label {
         string labelName;
         int labelAddress = -1;
         Label* next = nullptr;
     };
+	string linkFile;
+	string text[100];
+	int numberOfInstruction = 0;
     Label* labelArray = nullptr;
 public:
-
-    FileAssembly(string _linkFile) : linkFile(_linkFile) {
-        ifstream fileIn;
-        fileIn.open(linkFile);
+	FileAssembly(string _linkFile) : linkFile(_linkFile){
+// This is for TEXT PART
+		int i = 0;
+		string temp;
+		ifstream fileIn;
+		fileIn.open(_linkFile);
+		while (!fileIn.eof()){
+			getline(fileIn, temp);
+			if (int(temp.find(".text")) >= 0){
+				while (!fileIn.eof()){
+					getline(fileIn, temp);
+                    if (!(getWord(temp, 1) == "")){
+                        if (!(getWord(temp,2) == "")){
+                            text[i] = temp;
+                            if (int(text[i].find(":")) >= 0){
+                                for (int j = 0; j <= int(text[i].find(":")); j++){
+                                    text[i][j] = ' ';
+                                }
+                            }
+                            i++;
+                        }
+                    }
+				}
+				numberOfInstruction = i;
+				break;
+			}
+		}
+// This is for LABEL part
+        fileIn.seekg(0);
         string offsetLine = "";
         while(1) {
             getline(fileIn, offsetLine);
@@ -53,21 +83,17 @@ public:
                 if(word2.compare("")) countAddress++;
             }
         }
-        // Label* seeker = labelArray;
-        // while(seeker != nullptr) {
-        //     if(seeker->labelAddress > (countAddress - 1) * 4) seeker->labelAddress = -1;
-        //     seeker = seeker->next;
-        // }
-        // seeker = labelArray;
-        // while(seeker != nullptr) {
-        //     cout << seeker->labelName << ' ' << seeker->labelAddress << '\n';
-        //     seeker = seeker->next;
-        // }
-        // cout << "Done";
-    }
-    
+
+		fileIn.close();
+	};
+	string getInstruction(int);
 };
-int main() {
-    FileAssembly input("assembly.txt");
-    return 0;
+string FileAssembly::getInstruction(int address){
+	if (address % 4 != 0) return "";
+	if (address/4 < numberOfInstruction) return text[address/4];
+	else return "";
 }
+// int main(){
+// 	FileAssembly input("assembly.txt");
+// }
+#endif

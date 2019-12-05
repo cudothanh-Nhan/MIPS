@@ -30,3 +30,6 @@ $gp
 $sp
 $fa
 $ra
+pc
+hi
+lo

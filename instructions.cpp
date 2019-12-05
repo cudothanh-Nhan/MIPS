@@ -6,6 +6,7 @@
 #include "getRegister.h"
 #include "getNumber.h"
 #include "register.h"
+#include "fileAssembly.h"
 
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
@@ -168,6 +169,7 @@ string Add::getName(){
 }
 void Add::execute(){
     reg.setRegisterValue(rd, reg.getRegisterValue(rs) + reg.getRegisterValue(rt));
+    cmd.write(rd, reg.getRegisterValue(rd));
 }
 Add::~Add(){}
 
@@ -301,14 +303,28 @@ Instruction* navigationCommand(string _instruction){
     else return nullptr;
 }
 void setup() {
-    cmd.init();
+    cmd.print();
     reg.init();
 }
-void printToConsole() {
-    cmd.init();
-    cmd.pause();
-}
+
 // Replace int main() with int process()
 int main(){
     setup();
+    FileAssembly fileIn("testAssembly.txt");
+    while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+        string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
+        Instruction* ptr = navigationCommand(instruction);
+        cout << "------------------------------------------------------" <<'\n';
+        cout << "Next Command: " << optimizeString(instruction) << '\n';
+        cout << "------------------------------------------------------" << '\n';
+        ptr->init(instruction);
+        ptr->execute();
+        cmd.pause();
+        cmd.print();
+        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
+        cmd.write("pc", reg.getRegisterValue("pc"));
+    }
+    cout << "------------------------------------------------------" << '\n';
+    cout << "PROGRAM HAS ENDED!!" << '\n';
+    cout << "------------------------------------------------------" << '\n';
 }
