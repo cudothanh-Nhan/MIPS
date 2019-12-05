@@ -22,11 +22,9 @@ int getNumbers(string _instruction) {
 				}
 			}
 		}
-<<<<<<< HEAD
+
 		if ((count > 0) || (_instruction[index + 1] == '\0')) break;
-=======
-		if ((count > 0) || (_instruction[index+1] == '\0')) break;
->>>>>>> afc070f7aa9316357460d4600c8d216e8453a582
+
 		index++;
 	}
 	for (int i = count - 1; i >= 0; i--) {
