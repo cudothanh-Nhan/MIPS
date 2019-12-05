@@ -316,14 +316,13 @@ void printToConsole() {
 int main(){
     setup();
     FileAssembly fileIn("assembly.txt");
-    int instructionAddress = 0;
-    while(fileIn.getInstruction(instructionAddress).compare("")) {
-        string instruction = fileIn.getInstruction(instructionAddress);
+    while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+        string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
         Instruction* ptr = navigationCommand(instruction);
         ptr->init(instruction);
         ptr->execute();
         printToConsole();
-        instructionAddress += 4;
+        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
     }
 
 }

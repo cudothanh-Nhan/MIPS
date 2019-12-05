@@ -2,15 +2,7 @@
     a: .word 1
     b: .float 2
 .text
-<<<<<<< HEAD
+
     li $t0, 10
     li $t1, 12
     add $a0, $t0, $t1
-=======
-this:
-	li $t1, 200
-    addi $t2, $t1, 200
-that:
-    ori $t2, $t1,     400
-    lw $t1, 200   (   $t2    )    
->>>>>>> afc070f7aa9316357460d4600c8d216e8453a582
