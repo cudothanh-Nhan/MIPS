@@ -7,6 +7,7 @@
 #include "getRegister.h"
 #include "getWord.h"
 #include "serial.h"
+#include "getText.h"
 
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
@@ -222,13 +223,19 @@ I_Format* navigationCommand(string _instruction) {
 
 // Replace int main() with int process()
 int main() {
-	string instruction = "addi $t1,$t2, 200";
+	FileAssembly fileIn("assembly.txt");
+	string instruction = fileIn.getInstruction(0);
 	Instruction* ptr = navigationCommand(instruction);
 	reg.init();
-	ptr->init(instruction);
 	cmd.init();
+	int t;
+	for (int t = 0; t < 3; t++){
+	instruction = fileIn.getInstruction(4*t);
+	ptr->init(instruction);
+	cout << "Next command: " << optimizeString(instruction) << endl;
 	cmd.pause();
 	ptr->execute();
 	cmd.init();
+	}
     return 0;
 }

@@ -2,17 +2,9 @@
     a: .word 1
     b: .float 2
 .text
-dis:
-this:        ljsadasjd dáimnla
-        dasjdlsaj sniais
+this:
+	li $t1, 200
+    addi $t2, $t1, 200
 that:
-these:
-    jdasdksa ánlkdalsd
-    aasnakas sânkda
-haha:
-    sdsdsasda ádas
-hihi:
-    adasdasđấ ádá
-hoho:
-    fdsdsfssadad ấda
-hic:
+    ori $t2, $t1,     400
+    lw $t1, 200   (   $t2    )    
