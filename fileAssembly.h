@@ -8,14 +8,15 @@
 using namespace std;
 
 class FileAssembly {
-	string linkFile;
-	string text[100];
-	int numberOfInstruction = 0;
+protected:
     struct Label {
         string labelName;
         int labelAddress = -1;
         Label* next = nullptr;
     };
+	string linkFile;
+	string text[100];
+	int numberOfInstruction = 0;
     Label* labelArray = nullptr;
 public:
 	FileAssembly(string _linkFile) : linkFile(_linkFile){
@@ -88,9 +89,9 @@ public:
 	string getInstruction(int);
 };
 string FileAssembly::getInstruction(int address){
-	if (address % 4 != 0) return "Nhap sai dia chi";
+	if (address % 4 != 0) return "";
 	if (address/4 < numberOfInstruction) return text[address/4];
-	else return "DEO CO DAU MA KIEM";
+	else return "";
 }
 // int main(){
 // 	FileAssembly input("assembly.txt");

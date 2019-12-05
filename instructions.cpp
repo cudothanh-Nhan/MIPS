@@ -265,7 +265,6 @@ string Li::getName() {
 }
 void Li::execute() {
 	reg.setRegisterValue(rs, imm);
-    cout << reg.getRegisterValue(rs) << '\n';
 	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Li::~Li() {
@@ -304,26 +303,28 @@ Instruction* navigationCommand(string _instruction){
     else return nullptr;
 }
 void setup() {
-    cmd.init();
+    cmd.print();
     reg.init();
-    cmd.pause();
 }
-void printToConsole() {
-    cmd.init();
-    cmd.pause();
-}
+
 // Replace int main() with int process()
 int main(){
-
+    setup();
     FileAssembly fileIn("testAssembly.txt");
-    int pc = 0;
-    // while(fileIn.getInstruction(pc).compare("")) {
-    //     string instruction = fileIn.getInstruction(pc);
-    //     Instruction* ptr = navigationCommand(instruction);
-    //     ptr->init(instruction);
-    //     ptr->execute();
-    //     printToConsole();
-    //     pc += 4;
-    // }
-    cout << "done";
+    while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+        string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
+        Instruction* ptr = navigationCommand(instruction);
+        cout << "------------------------------------------------------" <<'\n';
+        cout << "Next Command: " << optimizeString(instruction) << '\n';
+        cout << "------------------------------------------------------" << '\n';
+        ptr->init(instruction);
+        ptr->execute();
+        cmd.pause();
+        cmd.print();
+        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
+        cmd.write("pc", reg.getRegisterValue("pc"));
+    }
+    cout << "------------------------------------------------------" << '\n';
+    cout << "PROGRAM HAS ENDED!!" << '\n';
+    cout << "------------------------------------------------------" << '\n';
 }
