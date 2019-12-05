@@ -6,6 +6,7 @@
 #include "getRegister.h"
 #include "getNumber.h"
 #include "register.h"
+#include "fileAssembly.h"
 
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
@@ -168,6 +169,7 @@ string Add::getName(){
 }
 void Add::execute(){
     reg.setRegisterValue(rd, reg.getRegisterValue(rs) + reg.getRegisterValue(rt));
+    cmd.write(rd, reg.getRegisterValue(rd));
 }
 Add::~Add(){}
 
@@ -263,6 +265,7 @@ string Li::getName() {
 }
 void Li::execute() {
 	reg.setRegisterValue(rs, imm);
+    cout << reg.getRegisterValue(rs) << '\n';
 	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Li::~Li() {
@@ -303,6 +306,7 @@ Instruction* navigationCommand(string _instruction){
 void setup() {
     cmd.init();
     reg.init();
+    cmd.pause();
 }
 void printToConsole() {
     cmd.init();
@@ -311,4 +315,15 @@ void printToConsole() {
 // Replace int main() with int process()
 int main(){
     setup();
+    FileAssembly fileIn("assembly.txt");
+    int instructionAddress = 0;
+    while(fileIn.getInstruction(instructionAddress).compare("")) {
+        string instruction = fileIn.getInstruction(instructionAddress);
+        Instruction* ptr = navigationCommand(instruction);
+        ptr->init(instruction);
+        ptr->execute();
+        printToConsole();
+        instructionAddress += 4;
+    }
+
 }

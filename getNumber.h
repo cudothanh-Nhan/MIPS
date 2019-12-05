@@ -22,7 +22,7 @@ int getNumbers(string _instruction) {
 				}
 			}
 		}
-		if (count != 0) break;
+		if ((count > 0) || (_instruction[index + 1] == '\0')) break;
 		index++;
 	}
 	for (int i = count - 1; i >= 0; i--) {

@@ -43,9 +43,9 @@ public:
 	string getInstruction(int);
 };
 string FileAssembly::getInstruction(int address){
-	if (address % 4 != 0) return "Nhap sai dia chi";
+	if (address % 4 != 0) return "";
 	if (address/4 < numberOfInstruction) return text[address/4];
-	else return "DEO CO DAU MA KIEM";
+	else return "";
 }
 // int main(){
 // 	FileAssembly input("assembly.txt");
