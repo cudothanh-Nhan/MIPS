@@ -47,13 +47,4 @@ string FileAssembly::getInstruction(int address){
 	if (address/4 < numberOfInstruction) return text[address/4];
 	else return "";
 }
-// int main(){
-// 	FileAssembly input("assembly.txt");
-// 	int t = -1;
-//     do{
-// 	    cin >> t;
-// 	    cout << input.getInstruction(t) << endl;
-//     } while(t != -1);
-// 	return 0;
-// }
 #endif
