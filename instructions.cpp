@@ -314,15 +314,16 @@ void printToConsole() {
 }
 // Replace int main() with int process()
 int main(){
-    setup();
-    FileAssembly fileIn("assembly.txt");
-    while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
-        string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
-        Instruction* ptr = navigationCommand(instruction);
-        ptr->init(instruction);
-        ptr->execute();
-        printToConsole();
-        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
-    }
 
+    FileAssembly fileIn("testAssembly.txt");
+    int pc = 0;
+    // while(fileIn.getInstruction(pc).compare("")) {
+    //     string instruction = fileIn.getInstruction(pc);
+    //     Instruction* ptr = navigationCommand(instruction);
+    //     ptr->init(instruction);
+    //     ptr->execute();
+    //     printToConsole();
+    //     pc += 4;
+    // }
+    cout << "done";
 }

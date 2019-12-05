@@ -2,7 +2,6 @@
     a: .word 1
     b: .float 2
 .text
-
     li $t0, 10
     li $t1, 12
     add $a0, $t0, $t1
