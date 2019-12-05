@@ -24,9 +24,15 @@ Serial::Serial(){
 }
 void Serial::init(){
     system("cls");
-    cout << setw(18) << left << "Register Name" << "|" << setw(18) << left << "Register Number" << " |" << setw(18) << "Value" << endl;
-    for (int i = 0; i < 32; i++) cout << left << setw(18) << registerName[i] << "| " << left << setw(18) << i << "| " << left << setw(18) << registerValue[i] << endl;
-    for (int i = 32; i < 35; i++) cout << left << setw(18) << registerName[i] << "|                   " << "| " << setw(18) << registerValue[i] << endl;
+    cout << setw(18) << left << "   Register Name" << "|" << setw(18) << left << "  Register Number" << " |" << setw(18) << " Value" << endl;
+    cout << "----------------------------------------------" << endl;
+    for (int i = 0; i < 32; i++) {
+        cout << "  "<< left << setw(16) << registerName[i] << "| " << left << setw(18) << i << "| " << left << setw(18) << registerValue[i] << endl;
+    }
+    for (int i = 32; i < 35; i++) {
+        cout << "  " << left << setw(16) << registerName[i] << "|                   " << "| " << setw(18) << registerValue[i] << endl;
+    }
+    cout << "----------------------------------------------" << endl;
 }
 int Serial::write(string registerInput, int valueInput){
     for (int i = 0; i < 34; i++){

@@ -3,7 +3,7 @@
     b: .float 2
 .text
 this:
-	li $t1, 200
+	lui $t1, 2
     addi $t2, $t1, 200
 that:
     ori $t2, $t1,     400

@@ -101,6 +101,14 @@ public:
 	void execute();
 	~Li();
 };
+class Lui : public I_Format {
+protected:
+public:
+	Lui();
+	string getName();
+	void execute();
+	~Lui();
+};
 class Lw : public I_Format {
 protected:
 public:
@@ -192,6 +200,19 @@ Li::~Li() {
 }
 #pragma endregion Li
 
+Lui::Lui() : I_Format("lui") {}
+string Lui::getName() {
+	return this->NAME;
+}
+void Lui::execute() {
+	long temp = imm * 65536;
+	reg.setRegisterValue(rs, temp);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Lui::~Lui() {
+	cout << "Destructor Lui called\n";
+}
+
 #pragma region Lw
 Lw::Lw() : I_Format("lw") {}
 string Lw::getName() {
@@ -216,6 +237,7 @@ I_Format* navigationCommand(string _instruction) {
     else if(!name.compare("ori")) return new Ori;
 	else if(!name.compare("slti")) return new Slti;	
 	else if(!name.compare("li")) return new Li;
+	else if(!name.compare("lui")) return new Lui;
     else return nullptr;
 }
 
