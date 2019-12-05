@@ -3,16 +3,16 @@
     b: .float 2
 .text
 dis:
-this:        ljsadasj
-        dasjdlsaj
+this:        ljsadasjd dáimnla
+        dasjdlsaj sniais
 that:
 these:
-    jdasdksa
-    aasnakas
+    jdasdksa ánlkdalsd
+    aasnakas sânkda
 haha:
-    sdsds
+    sdsdsasda ádas
 hihi:
-    adasdas
+    adasdasđấ ádá
 hoho:
-    fdsdsfs
+    fdsdsfssadad ấda
 hic:

@@ -222,7 +222,7 @@ I_Format* navigationCommand(string _instruction) {
 
 // Replace int main() with int process()
 int main() {
-	string instruction = "li $t1, 0000";
+	string instruction = "addi $t1,$t2, 200";
 	Instruction* ptr = navigationCommand(instruction);
 	reg.init();
 	ptr->init(instruction);
