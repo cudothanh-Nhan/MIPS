@@ -14,6 +14,8 @@ using namespace std;
 
 static Register reg("registerList.txt");
 static Serial cmd;
+static FileAssembly fileIn("testAssembly.txt");
+
 #pragma region INSTRUCTION_INTERFACE
 class Instruction {
 protected:
@@ -219,9 +221,9 @@ string Mult::getName(){
     return this->NAME;
 }
 void Mult::execute(){
-    reg.setRegisterValue("hi", reg.getRegisterValue(rd) * reg.getRegisterValue(rs));
+    reg.setRegisterValue("hi", reg.getRegisterValue(rd) * reg.getRegisterValue(rt));
     cmd.write("hi", reg.getRegisterValue("hi"));
-    reg.setRegisterValue("lo", reg.getRegisterValue(rd) * reg.getRegisterValue(rs));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rd) * reg.getRegisterValue(rt));
     cmd.write("lo", reg.getRegisterValue("lo"));
 }
 Mult::~Mult(){}
@@ -231,9 +233,9 @@ string Div::getName(){
     return this->NAME;
 }
 void Div::execute(){
-    reg.setRegisterValue("hi", reg.getRegisterValue(rd) % reg.getRegisterValue(rs));
+    reg.setRegisterValue("hi", reg.getRegisterValue(rd) % reg.getRegisterValue(rt));
     cmd.write("hi", reg.getRegisterValue("hi"));
-    reg.setRegisterValue("lo", reg.getRegisterValue(rd) / reg.getRegisterValue(rs));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rd) / reg.getRegisterValue(rt));
     cmd.write("lo", reg.getRegisterValue("lo"));
 }
 Div::~Div(){}
@@ -300,6 +302,7 @@ Li::Li() : I_Format("li") {}
 string Li::getName() {
 	return this->NAME;
 }
+
 void Li::execute() {
 	reg.setRegisterValue(rs, imm);
 	cmd.write(rs, reg.getRegisterValue(rs));
@@ -348,7 +351,7 @@ void setup() {
 // Replace int main() with int process()
 int main(){
     setup();
-    FileAssembly fileIn("testAssembly.txt");
+    //FileAssembly fileIn("testAssembly.txt");
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
         Instruction* ptr = navigationCommand(instruction);
@@ -357,12 +360,13 @@ int main(){
         cout << "------------------------------------------------------" << '\n';
         ptr->init(instruction);
         ptr->execute();
-        cmd.pause();
-        cmd.print();
         reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
         cmd.write("pc", reg.getRegisterValue("pc"));
+        cmd.pause();
+        cmd.print();
     }
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
+
 }
