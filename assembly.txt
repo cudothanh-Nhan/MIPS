@@ -5,6 +5,7 @@
 this:
 	lui $t1, 2
     addi $t2, $t1, 200
+    div $t2, $t1
 that:
     ori $t2, $t1,     400
     lw $t1, 200   (   $t2    )    

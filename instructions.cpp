@@ -106,6 +106,22 @@ public:
     void execute();
     ~Sll();
 };
+class Mult : public R_Format {
+protected:
+public:
+    Mult();
+    string getName();
+    void execute();
+    ~Mult();
+};
+class Div : public R_Format {
+protected:
+public:
+    Div();
+    string getName();
+    void execute();
+    ~Div();
+};
 #pragma endregion R-Format command Interface
 #pragma region I-Format command Interface
 
@@ -197,6 +213,30 @@ void Sll::execute(){
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Sll::~Sll(){}
+
+Mult::Mult() : R_Format("mult"){}
+string Mult::getName(){
+    return this->NAME;
+}
+void Mult::execute(){
+    reg.setRegisterValue("hi", reg.getRegisterValue(rd) * reg.getRegisterValue(rs));
+    cmd.write("hi", reg.getRegisterValue("hi"));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rd) * reg.getRegisterValue(rs));
+    cmd.write("lo", reg.getRegisterValue("lo"));
+}
+Mult::~Mult(){}
+
+Div::Div() : R_Format("div"){}
+string Div::getName(){
+    return this->NAME;
+}
+void Div::execute(){
+    reg.setRegisterValue("hi", reg.getRegisterValue(rd) % reg.getRegisterValue(rs));
+    cmd.write("hi", reg.getRegisterValue("hi"));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rd) / reg.getRegisterValue(rs));
+    cmd.write("lo", reg.getRegisterValue("lo"));
+}
+Div::~Div(){}
 #pragma endregion R-Format Command Implementation
 #pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}
@@ -291,7 +331,8 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("subtract")) return new Subtract;
     else if(!name.compare("and")) return new And;
     else if(!name.compare("sll")) return new Sll;
-    else if(!name.compare("sll")) return new Sll;
+    else if(!name.compare("mult")) return new Mult;
+    else if(!name.compare("div")) return new Div;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("andi")) return new Andi;
     else if(!name.compare("ori")) return new Ori;
