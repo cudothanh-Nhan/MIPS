@@ -69,7 +69,7 @@ void I_Format::init(string _instruction){
 }
 #pragma endregion END
 
-#pragma region COMMAND_INTERFACE 
+#pragma region R-Fomat command Interface
 // R Format ----------------------------------------
 class Add : public R_Format {
 protected:
@@ -106,7 +106,8 @@ public:
     void execute();
     ~Sll();
 };
-// I FORMAT--------------------------------------
+#pragma endregion R-Format command Interface
+#pragma region I-Format command Interface
 
 class Addi : public I_Format {
 protected:
@@ -159,10 +160,9 @@ public:
 	void execute();
 	~Lw();
 };
-#pragma endregion END
+#pragma endregion I-Format Interface
 
-#pragma region IMPLEMENT_COMMAND
-
+#pragma region R-Format Command Implementation
 Add::Add() : R_Format("add"){}
 string Add::getName(){
     return this->NAME;
@@ -197,9 +197,8 @@ void Sll::execute(){
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Sll::~Sll(){}
-// I FORMAT----------------------------------------------------------
-
-
+#pragma endregion R-Format Command Implementation
+#pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}
 string Addi::getName() {
 	return this->NAME;
@@ -213,8 +212,6 @@ void Addi::execute() {
 Addi::~Addi() {
 	cout << "Destructor Addi called\n";
 }
-
-
 
 
 Andi::Andi() : I_Format("andi") {}
@@ -284,7 +281,7 @@ void Lw::execute() {
 Lw::~Lw() {
 	cout << "Destructor Ordi called\n";
 }
-#pragma endregion END
+#pragma endregion I-Format Command Implementation
 
 
 
