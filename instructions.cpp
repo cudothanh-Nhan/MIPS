@@ -135,6 +135,14 @@ public:
     void execute();
     ~Div();
 };
+class Jr : public R_Format {
+protected:
+public:
+    Jr();
+    string getName();
+    void execute();
+    ~Jr();
+};
 #pragma endregion R-Format command Interface
 #pragma region I-Format command Interface
 
@@ -250,6 +258,15 @@ void Div::execute(){
     cmd.write("lo", reg.getRegisterValue("lo"));
 }
 Div::~Div(){}
+
+Jr::Jr() : R_Format("jr"){}
+string Jr::getName(){
+    return this->NAME;
+}
+void Jr::execute(){
+    reg.setRegisterValue("pc", fileIn.getLabelAddress(rs));
+}
+Jr::~Jr(){}
 #pragma endregion R-Format Command Implementation
 #pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}
@@ -347,6 +364,7 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("sll")) return new Sll;
     else if(!name.compare("mult")) return new Mult;
     else if(!name.compare("div")) return new Div;
+    else if(!name.compare("jr")) return new Jr;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("andi")) return new Andi;
     else if(!name.compare("ori")) return new Ori;

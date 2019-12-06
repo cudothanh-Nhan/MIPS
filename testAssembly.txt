@@ -5,5 +5,6 @@
     li $t0, 200
     li $t1, 12
     mult $t0, $t1
+    jr $t0
 end: 
     add $a0, $t0, $t1

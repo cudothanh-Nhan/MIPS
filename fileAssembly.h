@@ -157,7 +157,7 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
     fileIn.close();
 };
 string FileAssembly::getInstruction(int address){
-	if (address % 4 != 0) return "";
+	if (address % 4 != 0 || address < 0) return "";
 	if (address/4 < numberOfInstruction) return text[address/4];
 	else return "";
 }
