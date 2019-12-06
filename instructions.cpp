@@ -11,7 +11,6 @@
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
 // Regular Expression
-
 static Register reg("registerList.txt");
 static Serial cmd;
 static FileAssembly fileIn("testAssembly.txt");
@@ -44,9 +43,21 @@ public:
     virtual ~R_Format(){}
 };
 void R_Format::init(string _instruction) {
-    rd = getRegister(_instruction, 1);
-    rt = getRegister(_instruction, 2);
-    rs = getRegister(_instruction, 3);
+    if(getRegister(_instruction, 3).compare("")) {
+        rd = getRegister(_instruction, 1);
+        rs = getRegister(_instruction, 2);
+        rt = getRegister(_instruction, 3);
+    }
+    else if(getRegister(_instruction, 2).compare("")) {
+        rs = getRegister(_instruction, 1);
+        rd = rs;
+        rt = getRegister(_instruction, 2);    
+    }
+    else {
+        rd = "";
+        rt = "";
+        rs = getRegister(_instruction, 1);
+    }
     shamt = getNumbers(_instruction);
 }
 
@@ -221,9 +232,9 @@ string Mult::getName(){
     return this->NAME;
 }
 void Mult::execute(){
-    reg.setRegisterValue("hi", reg.getRegisterValue(rd) * reg.getRegisterValue(rt));
+    reg.setRegisterValue("hi", reg.getRegisterValue(rs) * reg.getRegisterValue(rt));
     cmd.write("hi", reg.getRegisterValue("hi"));
-    reg.setRegisterValue("lo", reg.getRegisterValue(rd) * reg.getRegisterValue(rt));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rs) * reg.getRegisterValue(rt));
     cmd.write("lo", reg.getRegisterValue("lo"));
 }
 Mult::~Mult(){}
@@ -233,9 +244,9 @@ string Div::getName(){
     return this->NAME;
 }
 void Div::execute(){
-    reg.setRegisterValue("hi", reg.getRegisterValue(rd) % reg.getRegisterValue(rt));
+    reg.setRegisterValue("hi", reg.getRegisterValue(rs) % reg.getRegisterValue(rt));
     cmd.write("hi", reg.getRegisterValue("hi"));
-    reg.setRegisterValue("lo", reg.getRegisterValue(rd) / reg.getRegisterValue(rt));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rs) / reg.getRegisterValue(rt));
     cmd.write("lo", reg.getRegisterValue("lo"));
 }
 Div::~Div(){}
