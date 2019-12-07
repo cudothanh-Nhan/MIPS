@@ -247,17 +247,17 @@ I_Format* navigationCommand(string _instruction) {
 int main() {
 	FileAssembly fileIn("assembly.txt");
 	string instruction = fileIn.getInstruction(0);
-	Instruction* ptr = navigationCommand(instruction);
-	reg.init();
-	cmd.init();
-	int t;
-	for (int t = 0; t < 3; t++){
-	instruction = fileIn.getInstruction(4*t);
-	ptr->init(instruction);
-	cout << "Next command: " << optimizeString(instruction) << endl;
-	cmd.pause();
-	ptr->execute();
-	cmd.init();
-	}
+	cout << getNumbers(instruction);
+	// Instruction* ptr = navigationCommand(instruction);
+	// reg.init();
+	// cmd.init();
+	// int t;
+	// for (int t = 0; t < 3; t++){
+	// instruction = fileIn.getInstruction(4*t);
+	// ptr->init(instruction);
+	// cout << "Next command: " << optimizeString(instruction) << endl;
+	// cmd.pause();
+	// ptr->execute();
+	// cmd.init();
     return 0;
 }
