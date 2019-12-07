@@ -1,10 +1,11 @@
 .data
-    a: .word 1
-    b: .float 2
+    a: .word 1, 40000
+    b: .float 2, 4
 .text
-    li $t0, 200
-    li $t1, 12
-    mult $t0, $t1
-    jr $t0
-end: 
+hihi:
+    la $t1, a
+	lh $t3, 4($t1)
+end:
+    li $t2, 200
+    bne $t1, $t2, hihi
     add $a0, $t0, $t1

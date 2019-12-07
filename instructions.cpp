@@ -66,6 +66,8 @@ protected:
 	string rs;
 	string rt;
 	int imm;
+    string label = "";
+    string var = "";
 	const string NAME;
 public:
 	I_Format();
@@ -79,6 +81,10 @@ void I_Format::init(string _instruction){
 	rs = getRegister(_instruction, 1);
 	rt = getRegister(_instruction, 2);
 	imm = getNumbers(_instruction);
+    if (getWord(_instruction, 4) != ""){
+        label = getWord(_instruction, 4);
+    }
+    else var = getWord(_instruction, 3);
 }
 #pragma endregion END
 
@@ -189,6 +195,30 @@ public:
 	void execute();
 	~Li();
 };
+class Beq : public I_Format {
+protected:
+public:
+    Beq();
+    string getName();
+    void execute();
+    ~Beq();
+};
+class Bne : public I_Format {
+protected:
+public:
+    Bne();
+    string getName();
+    void execute();
+    ~Bne();
+};
+class La : public I_Format {
+protected:
+public:
+    La();
+    string getName();
+    void execute();
+    ~La();
+};
 class Lw : public I_Format {
 protected:
 public:
@@ -196,6 +226,22 @@ public:
 	string getName();
 	void execute();
 	~Lw();
+};
+class Sw : public I_Format {
+protected:
+public:
+    Sw();
+    string getName();
+    void execute();
+    ~Sw();
+};
+class Lh : public I_Format {
+protected:
+public:
+    Lh();
+    string getName();
+    void execute();
+    ~Lh();
 };
 #pragma endregion I-Format Interface
 
@@ -283,7 +329,6 @@ Addi::~Addi() {
 	cout << "Destructor Addi called\n";
 }
 
-
 Andi::Andi() : I_Format("andi") {}
 string Andi::getName() {
 	return this->NAME;
@@ -339,18 +384,98 @@ Li::~Li() {
 	cout << "Destructor Li called\n";
 }
 
+Beq::Beq() : I_Format("beq") {}
+string Beq::getName() {
+    return this->NAME;
+}
+void Beq::execute() {
+    if (!rt.compare("")) {
+        if (reg.getRegisterValue(rs) == imm){
+            reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+        }
+        return;
+    }        
+    if (rs.compare(rt) == 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Beq::~Beq() {
+    cout << "Destructor Beq called\n";
+}
+
+Bne::Bne() : I_Format("bne") {}
+string Bne::getName() {
+    return this->NAME;
+}
+void Bne::execute() {
+    if (!rt.compare("")){
+        if (reg.getRegisterValue(rs) != imm) {
+            reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+        }
+        return;
+    }
+    if (rs.compare(rt) != 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Bne::~Bne() {
+    cout << "Destructor Bne called\n";
+}
+La::La() : I_Format("la") {};
+string La::getName(){
+    return this->NAME;
+}
+void La::execute() {
+    if ((var.compare("")) && (imm == 0)){
+        reg.setRegisterAddress(rs, (int*)(fileIn.getDataAddress(var)));
+        cmd.write(rs, reg.getRegisterValue(rs));
+        return;
+    }
+    else {
+        reg.setRegisterValue(rs, imm);
+        cmd.write(rs, reg.getRegisterValue(rs));
+    }
+}
+La::~La(){
+    cout << "Destructor La called\n";
+}
 Lw::Lw() : I_Format("lw") {}
 string Lw::getName() {
 	return this->NAME;
 }
 void Lw::execute() {
-	// int temp;
-	// temp = reg.getAddressValue | imm;
-	// reg.setRegisterValue(rs, temp);
-	// cmd.write(rs, reg.getRegisterValue(rs));
+    if (var.compare("")) {
+        reg.setRegisterValue(rs, *(reg.getAddressValue(rt) + imm/4));
+        cmd.write(rs, reg.getRegisterValue(rs));
+        return;
+    }
 }
 Lw::~Lw() {
-	cout << "Destructor Ordi called\n";
+	cout << "Destructor Lw called\n";
+}
+Sw::Sw() : I_Format("sw") {}
+string Sw::getName() {
+	return this->NAME;
+}
+void Sw::execute() {
+    if (var.compare("")) {
+        *(reg.getAddressValue(rt) + imm/4) = reg.getRegisterValue(rs);
+        return;
+    }
+}
+Sw::~Sw() {
+	cout << "Destructor Sw called\n";
+}
+Lh::Lh() : I_Format("lh") {}
+string Lh::getName() {
+	return this->NAME;
+}
+void Lh::execute() {
+    if (var.compare("")) {
+        int* temp = (int*)(reg.getAddressValue(rt) + imm/4);
+        reg.setRegisterValue(rs, *temp);
+        cmd.write(rs, reg.getRegisterValue(rs));
+        return;
+    }
+}
+Lh::~Lh() {
+	cout << "Destructor Lh called\n";
 }
 #pragma endregion I-Format Command Implementation
 
@@ -370,6 +495,12 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("ori")) return new Ori;
 	else if(!name.compare("slti")) return new Slti;	
 	else if(!name.compare("li")) return new Li;
+    else if(!name.compare("beq")) return new Beq;
+    else if(!name.compare("bne")) return new Bne;
+    else if(!name.compare("la")) return new La;
+    else if(!name.compare("lw")) return new Lw;
+    else if(!name.compare("sw")) return new Sw;
+    else if(!name.compare("lh")) return new Lh;
     else return nullptr;
 }
 void setup() {
