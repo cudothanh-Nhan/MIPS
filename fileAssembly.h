@@ -144,13 +144,10 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
                 *((double*)dataRoot->ptrData + countPtr) = stod(getWord(stringLine,i));
                 countPtr++;
             }
-            else if (!getWord(stringLine,2).compare(".byte")) {
+            else if (!getWord(stringLine,2).compare(".byte") || !getWord(stringLine,2).compare(".asciiz")) {
                 *((string*)dataRoot->ptrData + countPtr) = getWord(stringLine,i);
                 countPtr++;
             } 
-            else if (!getWord(stringLine,2).compare(".asciiz")) {
-                
-            }
         }
         dataRoot->next = temp;
     } 
