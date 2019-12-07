@@ -14,7 +14,15 @@ using namespace std;
 static Register reg("registerList.txt");
 static Serial cmd;
 static FileAssembly fileIn("testAssembly.txt");
-
+class System {
+public:
+    static string consoleField;
+    void execute();
+};
+string System::consoleField = "Console Field: \n";
+void System::execute() {
+    int option = reg.getRegisterValue("$v0");
+}
 #pragma region INSTRUCTION_INTERFACE
 class Instruction {
 protected:
