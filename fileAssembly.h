@@ -127,7 +127,8 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
         if (!getWord(stringLine,2).compare(".word") ) dataRoot->ptrData = (void*)(new int[countArray]);
         else if (!getWord(stringLine,2).compare(".float")) dataRoot->ptrData = (void*)(new float[countArray]);
         else if (!getWord(stringLine,2).compare(".double")) dataRoot->ptrData = (void*)(new double[countArray]);
-        else if (!getWord(stringLine,2).compare(".byte") || !getWord(stringLine,2).compare(".asciiz")) dataRoot->ptrData = (void*)(new string[countArray]);
+        else if (!getWord(stringLine,2).compare(".asciiz")) dataRoot->ptrData = (void*)(new string[countArray]);
+        else if (!getWord(stringLine,2).compare(".byte")) dataRoot->ptrData = (void*)(new char[countArray]);
         
         for (int i = 3 ; i <= 50 ; i++) {
             if (!getWord(stringLine,i).compare("")) break;
@@ -144,8 +145,13 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
                 *((double*)dataRoot->ptrData + countPtr) = stod(getWord(stringLine,i));
                 countPtr++;
             }
-            else if (!getWord(stringLine,2).compare(".byte") || !getWord(stringLine,2).compare(".asciiz")) {
+            else if (!getWord(stringLine,2).compare(".asciiz")) {
                 *((string*)dataRoot->ptrData + countPtr) = getWord(stringLine,i);
+
+                countPtr++;
+            }
+            else if(!getWord(stringLine,2).compare(".byte")) {
+                *((char*)dataRoot->ptrData + countPtr) = getWord(stringLine,i)[0];
                 countPtr++;
             } 
         }
@@ -169,7 +175,10 @@ int FileAssembly::getLabelAddress(string _label) {
 void* FileAssembly::getDataAddress(string _name) {
     Data* seeker = dataRoot;
     while (seeker != nullptr) {
-        if (!seeker->name.compare(_name)) return seeker->ptrData;
+        if (!seeker->name.compare(_name)) {
+            if(!seeker->type.compare(".asciiz")) return (void*)((char*)seeker->ptrData + 8) ;
+            return seeker->ptrData;
+        }
         seeker = seeker->next;
     }
 }
@@ -185,8 +194,11 @@ FileAssembly::~FileAssembly() {
         else if (!seeker1->type.compare(".double")) {
             delete[] (double*)seeker1->ptrData;
         }
-        else if (!seeker1->type.compare(".byte") || !seeker1->type.compare(".asciiz")) {
+        else if (!seeker1->type.compare(".asciiz")) {
             delete[] (string*)seeker1->ptrData;
+        }
+        else if (!seeker1->type.compare(".byte")) {
+            delete[] (char*)seeker1->ptrData;
         }
         Data* temp = seeker1;
         seeker1 = seeker1->next;

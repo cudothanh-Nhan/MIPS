@@ -22,6 +22,14 @@ public:
 string System::consoleField = "Console Field: \n";
 void System::execute() {
     int option = reg.getRegisterValue("$v0");
+    switch(option) {
+        case 1:
+            consoleField.append(to_string(*(int*)reg.getAddressValue("$a0")));
+            break; 
+        case 4:
+            consoleField.append((char*)reg.getAddressValue("$a0"));
+            break;
+    }
 }
 #pragma region INSTRUCTION_INTERFACE
 class Instruction {
