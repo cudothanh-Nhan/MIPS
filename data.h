@@ -62,13 +62,10 @@ public:
                     *((double*)root->ptrData + countPtr) = stod(getWord(stringLine,i));
                     countPtr++;
                 }
-                else if (!getWord(stringLine,2).compare(".byte")) {
+                else if (!getWord(stringLine,2).compare(".byte") || !getWord(stringLine,2).compare(".asciiz")) {
                     *((string*)root->ptrData + countPtr) = getWord(stringLine,i);
                     countPtr++;
                 } 
-                else if (!getWord(stringLine,2).compare(".asciiz")) {
-                    
-                }
             }
             root->next = temp;
         } 
