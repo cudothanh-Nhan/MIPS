@@ -11,9 +11,10 @@
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
 // Regular Expression
-
 static Register reg("registerList.txt");
 static Serial cmd;
+static FileAssembly fileIn("testAssembly.txt");
+
 #pragma region INSTRUCTION_INTERFACE
 class Instruction {
 protected:
@@ -42,9 +43,21 @@ public:
     virtual ~R_Format(){}
 };
 void R_Format::init(string _instruction) {
-    rd = getRegister(_instruction, 1);
-    rt = getRegister(_instruction, 2);
-    rs = getRegister(_instruction, 3);
+    if(getRegister(_instruction, 3).compare("")) {
+        rd = getRegister(_instruction, 1);
+        rs = getRegister(_instruction, 2);
+        rt = getRegister(_instruction, 3);
+    }
+    else if(getRegister(_instruction, 2).compare("")) {
+        rs = getRegister(_instruction, 1);
+        rd = rs;
+        rt = getRegister(_instruction, 2);    
+    }
+    else {
+        rd = "";
+        rt = "";
+        rs = getRegister(_instruction, 1);
+    }
     shamt = getNumbers(_instruction);
 }
 
@@ -69,7 +82,7 @@ void I_Format::init(string _instruction){
 }
 #pragma endregion END
 
-#pragma region COMMAND_INTERFACE 
+#pragma region R-Fomat command Interface
 // R Format ----------------------------------------
 class Add : public R_Format {
 protected:
@@ -106,7 +119,32 @@ public:
     void execute();
     ~Sll();
 };
-// I FORMAT--------------------------------------
+class Mult : public R_Format {
+protected:
+public:
+    Mult();
+    string getName();
+    void execute();
+    ~Mult();
+};
+class Div : public R_Format {
+protected:
+public:
+    Div();
+    string getName();
+    void execute();
+    ~Div();
+};
+class Jr : public R_Format {
+protected:
+public:
+    Jr();
+    string getName();
+    void execute();
+    ~Jr();
+};
+#pragma endregion R-Format command Interface
+#pragma region I-Format command Interface
 
 class Addi : public I_Format {
 protected:
@@ -159,10 +197,9 @@ public:
 	void execute();
 	~Lw();
 };
-#pragma endregion END
+#pragma endregion I-Format Interface
 
-#pragma region IMPLEMENT_COMMAND
-
+#pragma region R-Format Command Implementation
 Add::Add() : R_Format("add"){}
 string Add::getName(){
     return this->NAME;
@@ -197,9 +234,41 @@ void Sll::execute(){
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Sll::~Sll(){}
-// I FORMAT----------------------------------------------------------
 
+Mult::Mult() : R_Format("mult"){}
+string Mult::getName(){
+    return this->NAME;
+}
+void Mult::execute(){
+    reg.setRegisterValue("hi", reg.getRegisterValue(rs) * reg.getRegisterValue(rt));
+    cmd.write("hi", reg.getRegisterValue("hi"));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rs) * reg.getRegisterValue(rt));
+    cmd.write("lo", reg.getRegisterValue("lo"));
+}
+Mult::~Mult(){}
 
+Div::Div() : R_Format("div"){}
+string Div::getName(){
+    return this->NAME;
+}
+void Div::execute(){
+    reg.setRegisterValue("hi", reg.getRegisterValue(rs) % reg.getRegisterValue(rt));
+    cmd.write("hi", reg.getRegisterValue("hi"));
+    reg.setRegisterValue("lo", reg.getRegisterValue(rs) / reg.getRegisterValue(rt));
+    cmd.write("lo", reg.getRegisterValue("lo"));
+}
+Div::~Div(){}
+
+Jr::Jr() : R_Format("jr"){}
+string Jr::getName(){
+    return this->NAME;
+}
+void Jr::execute(){
+    reg.setRegisterValue("pc", fileIn.getLabelAddress(rs));
+}
+Jr::~Jr(){}
+#pragma endregion R-Format Command Implementation
+#pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}
 string Addi::getName() {
 	return this->NAME;
@@ -213,8 +282,6 @@ void Addi::execute() {
 Addi::~Addi() {
 	cout << "Destructor Addi called\n";
 }
-
-
 
 
 Andi::Andi() : I_Format("andi") {}
@@ -263,6 +330,7 @@ Li::Li() : I_Format("li") {}
 string Li::getName() {
 	return this->NAME;
 }
+
 void Li::execute() {
 	reg.setRegisterValue(rs, imm);
 	cmd.write(rs, reg.getRegisterValue(rs));
@@ -284,7 +352,7 @@ void Lw::execute() {
 Lw::~Lw() {
 	cout << "Destructor Ordi called\n";
 }
-#pragma endregion END
+#pragma endregion I-Format Command Implementation
 
 
 
@@ -294,7 +362,9 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("subtract")) return new Subtract;
     else if(!name.compare("and")) return new And;
     else if(!name.compare("sll")) return new Sll;
-    else if(!name.compare("sll")) return new Sll;
+    else if(!name.compare("mult")) return new Mult;
+    else if(!name.compare("div")) return new Div;
+    else if(!name.compare("jr")) return new Jr;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("andi")) return new Andi;
     else if(!name.compare("ori")) return new Ori;
@@ -310,7 +380,7 @@ void setup() {
 // Replace int main() with int process()
 int main(){
     setup();
-    FileAssembly fileIn("testAssembly.txt");
+    //FileAssembly fileIn("testAssembly.txt");
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
         Instruction* ptr = navigationCommand(instruction);
@@ -319,12 +389,13 @@ int main(){
         cout << "------------------------------------------------------" << '\n';
         ptr->init(instruction);
         ptr->execute();
-        cmd.pause();
-        cmd.print();
         reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
         cmd.write("pc", reg.getRegisterValue("pc"));
+        cmd.pause();
+        cmd.print();
     }
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
+
 }
