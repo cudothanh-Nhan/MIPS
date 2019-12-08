@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <conio.h>
 using namespace std;
-
+static bool isExit = 0;
 class Serial {
     int registerValue[35];
 public:
@@ -35,7 +35,7 @@ void Serial::print(){
     cout << "----------------------------------------------" << endl;
 }
 int Serial::write(string registerInput, int valueInput){
-    for (int i = 0; i < 34; i++){
+    for (int i = 0; i < 35; i++){
         if (!registerInput.compare(registerName[i])){
             registerValue[i] = valueInput;
             return 1;
@@ -44,6 +44,7 @@ int Serial::write(string registerInput, int valueInput){
     return 0;
 }
 void Serial::pause() {
-    system("pause");
+    char temp = getchar();
+    if(temp == 'x') isExit = 1;
 }
 #endif

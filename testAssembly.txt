@@ -1,11 +1,11 @@
 .data
-    a: .word 1
-    b: .float 2
-    char: .asciiz "myName"
+    a: .word 10
+    b: .float 2 
+    c: .asciiz "myName"
+
 .text
-    li $t0, 200
-    li $t1, 12
-    mult $t0, $t1
-    jr $t0
-end: 
-    add $a0, $t0, $t1
+    li $a1, 11
+    li $a2, 3
+    div $a1, $a2
+    mfhi $t0
+    mflo $t1

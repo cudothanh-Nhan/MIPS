@@ -45,7 +45,7 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
             while (!fileIn.eof()){
                 getline(fileIn, temp);
                 if (!(getWord(temp, 1) == "")){
-                    if (!(getWord(temp,2) == "")){
+                    if (!(getWord(temp,2) == "") || !(getWord(temp, 1).compare("syscall"))){
                         text[i] = temp;
                         if (int(text[i].find(":")) >= 0){
                             for (int j = 0; j <= int(text[i].find(":")); j++){

@@ -11,23 +11,27 @@
 using namespace std;
 // PROTOTYPE----------------------------------------------------------
 // Regular Expression
-static Register reg("registerList.txt");
-static Serial cmd;
-static FileAssembly fileIn("testAssembly.txt");
 class System {
 public:
     static string consoleField;
     void execute();
 };
+static Register reg("registerList.txt");
+static Serial cmd;
+static FileAssembly fileIn("testAssembly.txt");
+static System sys;
+
 string System::consoleField = "Console Field: \n";
 void System::execute() {
     int option = reg.getRegisterValue("$v0");
     switch(option) {
         case 1:
             consoleField.append(to_string(*(int*)reg.getAddressValue("$a0")));
+            consoleField.append("\n");
             break; 
         case 4:
             consoleField.append((char*)reg.getAddressValue("$a0"));
+            consoleField.append("\n");
             break;
     }
 }
@@ -70,9 +74,9 @@ void R_Format::init(string _instruction) {
         rt = getRegister(_instruction, 2);    
     }
     else {
-        rd = "";
         rt = "";
         rs = getRegister(_instruction, 1);
+        rd = rs;
     }
     shamt = getNumbers(_instruction);
 }
@@ -82,6 +86,8 @@ protected:
 	string rs;
 	string rt;
 	int imm;
+    string label = "";
+    string var = "";
 	const string NAME;
 public:
 	I_Format();
@@ -95,7 +101,28 @@ void I_Format::init(string _instruction){
 	rs = getRegister(_instruction, 1);
 	rt = getRegister(_instruction, 2);
 	imm = getNumbers(_instruction);
+    if (getWord(_instruction, 4) != ""){
+        label = getWord(_instruction, 4);
+    }
+    else var = getWord(_instruction, 3);
 }
+
+class J_Format : public Instruction {
+protected:
+	string nameLabel;
+	const string NAME;
+public:
+	J_Format();
+	J_Format(string _name) : NAME(_name) {}
+	virtual string getName() = 0;
+	virtual void execute() = 0;
+	virtual ~J_Format() {}
+	void init(string _instruction);
+};
+void J_Format::init(string _instruction){
+	nameLabel = getWord(_instruction, 2);
+}
+
 #pragma endregion END
 
 #pragma region R-Fomat command Interface
@@ -159,6 +186,22 @@ public:
     void execute();
     ~Jr();
 };
+class Mfhi : public R_Format {
+protected:
+public:
+    Mfhi();
+    string getName();
+    void execute();
+    ~Mfhi();
+};
+class Mflo : public R_Format {
+protected:
+public:
+    Mflo();
+    string getName();
+    void execute();
+    ~Mflo();
+};
 #pragma endregion R-Format command Interface
 #pragma region I-Format command Interface
 
@@ -205,6 +248,30 @@ public:
 	void execute();
 	~Li();
 };
+class Beq : public I_Format {
+protected:
+public:
+    Beq();
+    string getName();
+    void execute();
+    ~Beq();
+};
+class Bne : public I_Format {
+protected:
+public:
+    Bne();
+    string getName();
+    void execute();
+    ~Bne();
+};
+class La : public I_Format {
+protected:
+public:
+    La();
+    string getName();
+    void execute();
+    ~La();
+};
 class Lw : public I_Format {
 protected:
 public:
@@ -213,8 +280,32 @@ public:
 	void execute();
 	~Lw();
 };
+class Sw : public I_Format {
+protected:
+public:
+    Sw();
+    string getName();
+    void execute();
+    ~Sw();
+};
+class Lh : public I_Format {
+protected:
+public:
+    Lh();
+    string getName();
+    void execute();
+    ~Lh();
+};
 #pragma endregion I-Format Interface
-
+#pragma region J-Format command Interface
+class Jump : public J_Format {
+public:
+	Jump();
+	string getName();
+	void execute();
+	~Jump();
+};
+#pragma endregion J-Format command Interface
 #pragma region R-Format Command Implementation
 Add::Add() : R_Format("add"){}
 string Add::getName(){
@@ -283,6 +374,26 @@ void Jr::execute(){
     reg.setRegisterValue("pc", fileIn.getLabelAddress(rs));
 }
 Jr::~Jr(){}
+
+Mfhi::Mfhi() : R_Format("mfhi"){}
+string Mfhi::getName(){
+    return this->NAME;
+}
+void Mfhi::execute(){
+    reg.setRegisterValue(rd, reg.getRegisterValue("hi"));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
+Mfhi::~Mfhi(){}
+
+Mflo::Mflo() : R_Format("mflo"){}
+string Mflo::getName(){
+    return this->NAME;
+}
+void Mflo::execute(){
+    reg.setRegisterValue(rd, reg.getRegisterValue("lo"));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
+Mflo::~Mflo(){}
 #pragma endregion R-Format Command Implementation
 #pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}
@@ -298,7 +409,6 @@ void Addi::execute() {
 Addi::~Addi() {
 	cout << "Destructor Addi called\n";
 }
-
 
 Andi::Andi() : I_Format("andi") {}
 string Andi::getName() {
@@ -355,21 +465,112 @@ Li::~Li() {
 	cout << "Destructor Li called\n";
 }
 
+Beq::Beq() : I_Format("beq") {}
+string Beq::getName() {
+    return this->NAME;
+}
+void Beq::execute() {
+    if (!rt.compare("")) {
+        if (reg.getRegisterValue(rs) == imm){
+            reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+        }
+        return;
+    }        
+    if (rs.compare(rt) == 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Beq::~Beq() {
+    cout << "Destructor Beq called\n";
+}
+
+Bne::Bne() : I_Format("bne") {}
+string Bne::getName() {
+    return this->NAME;
+}
+void Bne::execute() {
+    if (!rt.compare("")){
+        if (reg.getRegisterValue(rs) != imm) {
+            reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+        }
+        return;
+    }
+    if (rs.compare(rt) != 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Bne::~Bne() {
+    cout << "Destructor Bne called\n";
+}
+La::La() : I_Format("la") {};
+string La::getName(){
+    return this->NAME;
+}
+void La::execute() {
+    if ((var.compare("")) && (imm == 0)){
+        reg.setRegisterAddress(rs, (int*)(fileIn.getDataAddress(var)));
+        cmd.write(rs, reg.getRegisterValue(rs));
+        return;
+    }
+    else {
+        reg.setRegisterValue(rs, imm);
+        cmd.write(rs, reg.getRegisterValue(rs));
+    }
+}
+La::~La(){
+    cout << "Destructor La called\n";
+}
 Lw::Lw() : I_Format("lw") {}
 string Lw::getName() {
 	return this->NAME;
 }
 void Lw::execute() {
-	// int temp;
-	// temp = reg.getAddressValue | imm;
-	// reg.setRegisterValue(rs, temp);
-	// cmd.write(rs, reg.getRegisterValue(rs));
+    if (var.compare("")) {
+        reg.setRegisterValue(rs, *(reg.getAddressValue(rt) + imm/4));
+        cmd.write(rs, reg.getRegisterValue(rs));
+        return;
+    }
 }
 Lw::~Lw() {
-	cout << "Destructor Ordi called\n";
+	cout << "Destructor Lw called\n";
+}
+Sw::Sw() : I_Format("sw") {}
+string Sw::getName() {
+	return this->NAME;
+}
+void Sw::execute() {
+    if (var.compare("")) {
+        *(reg.getAddressValue(rt) + imm/4) = reg.getRegisterValue(rs);
+        return;
+    }
+}
+Sw::~Sw() {
+	cout << "Destructor Sw called\n";
+}
+Lh::Lh() : I_Format("lh") {}
+string Lh::getName() {
+	return this->NAME;
+}
+void Lh::execute() {
+    if (var.compare("")) {
+        int* temp = (int*)(reg.getAddressValue(rt) + imm/4);
+        reg.setRegisterValue(rs, *temp);
+        cmd.write(rs, reg.getRegisterValue(rs));
+        return;
+    }
+}
+Lh::~Lh() {
+	cout << "Destructor Lh called\n";
 }
 #pragma endregion I-Format Command Implementation
-
+#pragma region J-Format Command Implementation
+Jump::Jump() : J_Format("j"){};
+string Jump::getName() {
+	return this->NAME;
+}
+void Jump::execute() {
+	int labelJump = fileIn.getLabelAddress(nameLabel);
+	reg.setRegisterValue("pc",labelJump - 4);
+    cmd.write("pc",reg.getRegisterValue("pc"));
+}
+Jump::~Jump(){};
+#pragma endregion J-Format Command Implementation
 
 
 Instruction* navigationCommand(string _instruction){
@@ -381,11 +582,24 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("mult")) return new Mult;
     else if(!name.compare("div")) return new Div;
     else if(!name.compare("jr")) return new Jr;
+    else if(!name.compare("mfhi")) return new Mfhi;
+    else if(!name.compare("mflo")) return new Mflo;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("andi")) return new Andi;
     else if(!name.compare("ori")) return new Ori;
 	else if(!name.compare("slti")) return new Slti;	
 	else if(!name.compare("li")) return new Li;
+    else if(!name.compare("beq")) return new Beq;
+    else if(!name.compare("bne")) return new Bne;
+    else if(!name.compare("la")) return new La;
+    else if(!name.compare("lw")) return new Lw;
+    else if(!name.compare("sw")) return new Sw;
+    else if(!name.compare("lh")) return new Lh;
+    else if(!name.compare("j")) return new Jump;
+    else if(!name.compare("syscall")) {
+        sys.execute();
+        return nullptr;
+    }
     else return nullptr;
 }
 void setup() {
@@ -396,6 +610,7 @@ void setup() {
 // Replace int main() with int process()
 int main(){
     setup();
+    
     //FileAssembly fileIn("testAssembly.txt");
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
@@ -403,13 +618,20 @@ int main(){
         cout << "------------------------------------------------------" <<'\n';
         cout << "Next Command: " << optimizeString(instruction) << '\n';
         cout << "------------------------------------------------------" << '\n';
-        ptr->init(instruction);
-        ptr->execute();
+
+        if(ptr != nullptr) {
+            ptr->init(instruction);
+            ptr->execute();
+        }
         reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
-        cmd.write("pc", reg.getRegisterValue("pc"));
+        if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+            cmd.write("pc", reg.getRegisterValue("pc"));
+        }
         cmd.pause();
+        if(isExit == 1) break;
         cmd.print();
-    }
+        cout << sys.consoleField << '\n';
+    }    
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
