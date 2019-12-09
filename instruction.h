@@ -17,7 +17,7 @@ public:
 };
 static Register reg("registerList.txt");
 static Serial cmd;
-static FileAssembly fileIn("testAssembly.txt");
+static FileAssembly fileIn("assembly.txt");
 static System sys;
 
 string System::consoleField = "Console Field: \n";
