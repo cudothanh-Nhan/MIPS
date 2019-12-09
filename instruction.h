@@ -161,6 +161,14 @@ public:
     void execute();
     ~Sll();
 };
+class Srl : public R_Format {
+protected:
+public:
+    Srl();
+    string getName();
+    void execute();
+    ~Srl();
+};
 class Mult : public R_Format {
 protected:
 public:
@@ -380,6 +388,18 @@ void Sll::execute(){
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Sll::~Sll(){}
+
+Srl::Srl() : R_Format("srl"){}
+string Srl::getName(){
+    return this->NAME;
+}
+void Srl::execute(){
+    int temp = reg.getRegisterValue(rt);
+    temp >> shamt;
+    reg.setRegisterValue(rs, temp);
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Srl::~Srl(){}
 
 Mult::Mult() : R_Format("mult"){}
 string Mult::getName(){
