@@ -40,10 +40,13 @@ Instruction* navigationCommand(string _instruction){
 void setup() {
     cmd.print();
     reg.init();
+    cop.init();
 }
 
 // Replace int main() with int process()
-int main(){
+int main(int argc, char* argv[]){
+
+    fileIn.loadLink("testAssembly.txt");
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
@@ -56,7 +59,7 @@ int main(){
             ptr->init(instruction);
             ptr->execute();
         }
-        reg.setRegisterValue("cpc", reg.getRegisterValue("pc") + 4);
+        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
         if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
             cmd.write("pc", reg.getRegisterValue("pc"));
         }

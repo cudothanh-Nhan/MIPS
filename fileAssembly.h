@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <math.h>
-#include <string.h>
+#include <string>
 #include "getWord.h"	
 using namespace std;
 
@@ -27,14 +27,16 @@ protected:
     FileAssembly::Label* labelRoot = nullptr;
     Data* dataRoot = nullptr;
 public:
-    FileAssembly(string _linkFile);
+    FileAssembly(){};
+    void loadLink (string _linkFile);
 	string getInstruction(int);
     int getLabelAddress(string);
     void* getDataAddress(string);
     ~FileAssembly();
 };
-FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
+void FileAssembly::loadLink(string _linkFile) {
 // This is for TEXT PART
+    linkFile = _linkFile;
     int i = 0;
     string temp;
     ifstream fileIn;

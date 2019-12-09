@@ -17,9 +17,9 @@ public:
     void execute();
 };
 static Register reg("registerList.txt");
-static Coproc cop("coproc.txt");
+static Coproc cop("coprocList.txt");
 static Serial cmd;
-static FileAssembly fileIn("testAssembly.txt");
+static FileAssembly fileIn;
 static System sys;
 string System::consoleField = "Console Field: \n";
 void System::execute() {
