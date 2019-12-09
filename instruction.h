@@ -8,6 +8,7 @@
 #include "getRegister.h"
 #include "getNumber.h"
 #include "register.h"
+#include "coproc.h"
 #include "fileAssembly.h"
 #pragma region INSTRUCTION_INTERFACE
 class System {
@@ -16,6 +17,7 @@ public:
     void execute();
 };
 static Register reg("registerList.txt");
+static Coproc cop("coproc.txt");
 static Serial cmd;
 static FileAssembly fileIn("testAssembly.txt");
 static System sys;
