@@ -300,6 +300,30 @@ public:
     void execute();
     ~Lh();
 };
+class Sh : public I_Format {
+protected:
+public:
+    Sh();
+    string getName();
+    void execute();
+    ~Sh();
+};
+class Lb : public I_Format {
+protected:
+public:
+    Lb();
+    string getName();
+    void execute();
+    ~Lb();
+};
+class Sb : public I_Format {
+protected:
+public:
+    Sb();
+    string getName();
+    void execute();
+    ~Sb();
+};
 #pragma endregion I-Format Interface
 #pragma region J-Format command Interface
 class Jump : public J_Format {
@@ -590,6 +614,47 @@ void Lh::execute() {
 }
 Lh::~Lh() {
 	cout << "Destructor Lh called\n";
+}
+Sh::Sh() : I_Format("sh") {}
+string Sh::getName() {
+	return this->NAME;
+}
+void Sh::execute() {
+    if (var.compare("")) {
+        *(int*)(reg.getAddressValue(rt) + imm/4) = int16_t(reg.getRegisterValue(rs));
+        return;
+    }
+}
+Sh::~Sh() {
+	cout << "Destructor Sh called\n";
+}
+Lb::Lb() : I_Format("lb") {}
+string Lb::getName() {
+	return this->NAME;
+}
+void Lb::execute() {
+    if (var.compare("")) {
+        int* temp = (int*)(reg.getAddressValue(rt) + imm);
+        reg.setRegisterValue(rs, int8_t(*temp));
+        cmd.write(rs, reg.getRegisterValue(rs));
+        return;
+    }
+}
+Lb::~Lb() {
+	cout << "Destructor Lb called\n";
+}
+Sb::Sb() : I_Format("sb") {}
+string Sb::getName() {
+	return this->NAME;
+}
+void Sb::execute() {
+    if (var.compare("")) {
+        *(int*)(reg.getAddressValue(rt) + imm) = int8_t(reg.getRegisterValue(rs));
+        return;
+    }
+}
+Sb::~Sb() {
+	cout << "Destructor Sb called\n";
 }
 #pragma endregion I-Format Command Implementation
 #pragma region J-Format Command Implementation

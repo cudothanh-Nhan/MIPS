@@ -25,6 +25,9 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("lw")) return new Lw;
     else if(!name.compare("sw")) return new Sw;
     else if(!name.compare("lh")) return new Lh;
+    else if(!name.compare("sh")) return new Sh;
+    else if(!name.compare("lb")) return new Lb;
+    else if(!name.compare("sb")) return new Sb;
     else if(!name.compare("j")) return new Jump;
     else if(!name.compare("jal")) return new Jal;
     else if(!name.compare("syscall")) {
@@ -41,8 +44,6 @@ void setup() {
 // Replace int main() with int process()
 int main(){
     setup();
-    
-    //FileAssembly fileIn("testAssembly.txt");
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
         Instruction* ptr = navigationCommand(instruction);
@@ -66,4 +67,5 @@ int main(){
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
+    return 0;
 }

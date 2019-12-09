@@ -52,6 +52,13 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
                                 text[i][j] = ' ';
                             }
                         }
+                        if (int(text[i].find("#")) >= 0){
+                                int j = (int)(text[i].find("#"));
+								while (text[i][j] != '\0'){
+                                    text[i][j] = ' ';
+                                    j++;
+                                }
+							}
                         i++;
                     }
                 }

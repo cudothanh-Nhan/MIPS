@@ -1,0 +1,59 @@
+#include <fstream>
+#include <iostream>
+#include <math.h>
+#include <string.h>
+#include "getWord.h"	
+using namespace std;
+
+class FileAssembly {
+	string linkFile;
+	string text[100];
+	int numberOfInstruction = 0;
+public:
+	FileAssembly(string _linkFile) : linkFile(_linkFile){
+		int i = 0;
+		string temp;
+		ifstream fileIn;
+		fileIn.open(_linkFile);
+		while (!fileIn.eof()){
+			getline(fileIn, temp);
+			if (int(temp.find(".text")) >= 0){
+				while (!fileIn.eof()){
+					getline(fileIn, temp);
+                    if (!(getWord(temp, 1) == "")){
+                        if (!(getWord(temp,2) == "")){
+                            text[i] = temp;
+                            if (int(text[i].find(":")) >= 0){
+                                for (int j = 0; j <= int(text[i].find(":")); j++){
+                                    text[i][j] = ' ';
+                                }
+                            }
+							if (int(text[i].find("#")) >= 0){
+                                int j = (int)(text[i].find("#"));
+								while (text[i][j] != '\0'){
+                                    text[i][j] = ' ';
+                                    j++;
+                                }
+							}
+                            i++;
+                        }
+                    }
+				}
+				numberOfInstruction = i;
+				break;
+			}
+		}
+		fileIn.close();
+	};
+	void Showall(){
+        for (int i = 0; i <= numberOfInstruction; i++){
+            cout << text[i] << endl;
+        }
+    }
+};
+
+int main(){
+    FileAssembly fileIn("testAssembly.txt");
+    fileIn.Showall();
+    return 0;
+}
