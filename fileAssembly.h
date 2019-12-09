@@ -156,19 +156,19 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
                 countPtr++;
             }
             else if (!getWord(stringLine,2).compare(".asciiz")) {
-                while (stringLine[countString] != '\0') {
-                    if (stringLine[countString] == '\"') break;
-                    countString++;
-                }
-                countString++;
-                string stringIn = "";
-                for ( int i = countString ; ; i++) {
-                    if (stringLine[i] == '\"') break;
-                    stringIn += stringLine[countString];
-                    countString++;
-                }
-                countString++;
-                *((string*)dataRoot->ptrData + countPtr) = stringIn;
+                // while (stringLine[countString] != '\0') {
+                //     if (stringLine[countString] == '\"') break;
+                //     countString++;
+                // }
+                // countString++;
+                // string stringIn = "";
+                // for ( int i = countString ; ; i++) {
+                //     if (stringLine[i] == '\"') break;
+                //     stringIn += stringLine[countString];
+                //     countString++;
+                // }
+                // countString++;
+                *((string*)dataRoot->ptrData + countPtr) = getWord(stringLine, i);
                 countPtr++;
             }
             else if(!getWord(stringLine,2).compare(".byte")) {
