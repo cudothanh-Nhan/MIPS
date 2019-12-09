@@ -163,7 +163,7 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
                 countString++;
                 string stringIn = "";
                 for ( int i = countString ; ; i++) {
-                    if (stringLine[countString] == '\"') break;
+                    if (stringLine[i] == '\"') break;
                     stringIn += stringLine[countString];
                     countString++;
                 }
