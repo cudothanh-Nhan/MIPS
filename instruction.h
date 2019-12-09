@@ -17,9 +17,8 @@ public:
 };
 static Register reg("registerList.txt");
 static Serial cmd;
-static FileAssembly fileIn("assembly.txt");
+static FileAssembly fileIn("testAssembly.txt");
 static System sys;
-
 string System::consoleField = "Console Field: \n";
 void System::execute() {
     int option = reg.getRegisterValue("$v0");

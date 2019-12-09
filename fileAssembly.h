@@ -216,13 +216,13 @@ FileAssembly::~FileAssembly() {
         }
         Data* temp = seeker1;
         seeker1 = seeker1->next;
-        delete[] temp;
+        delete temp;
     }
     Label* seeker2 = labelRoot;
     while(seeker2 != nullptr) {
         Label* temp = seeker2;
         seeker2 = seeker2->next;
-        delete[] temp;
+        delete temp;
     }
 }
 // int main(){

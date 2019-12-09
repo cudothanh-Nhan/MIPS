@@ -41,7 +41,6 @@ void setup() {
 // Replace int main() with int process()
 int main(){
     setup();
-    
     //FileAssembly fileIn("testAssembly.txt");
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
@@ -66,4 +65,5 @@ int main(){
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
+    return 0;
 }
