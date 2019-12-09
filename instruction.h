@@ -25,13 +25,17 @@ void System::execute() {
     int option = reg.getRegisterValue("$v0");
     switch(option) {
         case 1:
-            consoleField.append(to_string(*(int*)reg.getAddressValue("$a0")));
-            consoleField.append("\n");
+            consoleField.append(to_string(reg.getRegisterValue("$a0")));
             break; 
         case 4:
             consoleField.append((char*)reg.getAddressValue("$a0"));
-            consoleField.append("\n");
             break;
+        case 5:
+            int temp = 0;
+            cin >> temp;
+            consoleField.append(to_string(temp));
+            reg.setRegisterValue("$a0", temp);
+            cmd.write("$a0", temp);
     }
 }
 class Instruction {
@@ -347,8 +351,9 @@ string Sll::getName(){
     return this->NAME;
 }
 void Sll::execute(){
-    int temp = reg.getRegisterValue(rt) * pow(2, shamt);
-    reg.setRegisterValue(rd, temp);
+    int temp = reg.getRegisterValue(rt);
+    temp << shamt;
+    reg.setRegisterValue(rs, temp);
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Sll::~Sll(){}
