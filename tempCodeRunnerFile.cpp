@@ -1,2 +1,2 @@
- Ori called\n";
-}
+cout << "hihi" << endl;
+        return;

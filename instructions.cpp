@@ -587,7 +587,7 @@ string Lh::getName() {
 void Lh::execute() {
     if (var.compare("")) {
         int* temp = (int*)(reg.getAddressValue(rt) + imm/4);
-        reg.setRegisterValue(rs, *temp);
+        reg.setRegisterValue(rs, int16_t(*temp));
         cmd.write(rs, reg.getRegisterValue(rs));
         return;
     }
