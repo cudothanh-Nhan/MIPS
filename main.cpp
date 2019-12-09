@@ -44,8 +44,6 @@ void setup() {
 // Replace int main() with int process()
 int main(){
     setup();
-
-
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
         Instruction* ptr = navigationCommand(instruction);

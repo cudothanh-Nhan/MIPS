@@ -54,12 +54,12 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
                         }
                         if (int(text[i].find("#")) >= 0){
                                 int j = (int)(text[i].find("#"));
-								while (text[i][j] != '\0'){
+								while (text[i][j] !=  '\0'){
                                     text[i][j] = ' ';
                                     j++;
                                 }
 							}
-                        i++;
+                        if (getWord(text[i], 1) != "") i++;
                     }
                 }
             }
