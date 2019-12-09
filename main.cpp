@@ -8,7 +8,6 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("subtract")) return new Subtract;
     else if(!name.compare("and")) return new And;
     else if(!name.compare("sll")) return new Sll;
-    else if(!name.compare("srl")) return new Srl;
     else if(!name.compare("mult")) return new Mult;
     else if(!name.compare("div")) return new Div;
     else if(!name.compare("jr")) return new Jr;
