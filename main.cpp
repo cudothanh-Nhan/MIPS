@@ -44,6 +44,10 @@ void setup() {
 // Replace int main() with int process()
 int main(){
     setup();
+<<<<<<< HEAD
+=======
+    //FileAssembly fileIn("testAssembly.txt");
+>>>>>>> 106380e78a6190bbf7188507f846ff85cb684cfe
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
         Instruction* ptr = navigationCommand(instruction);

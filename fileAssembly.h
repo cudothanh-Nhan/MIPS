@@ -133,7 +133,7 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
         dataRoot->name = getWord(stringLine,1);
         dataRoot->type = getWord(stringLine,2);
         int countPtr = 0;
-
+        int countString = 0;
         if (!getWord(stringLine,2).compare(".word") ) dataRoot->ptrData = (void*)(new int[countArray]);
         else if (!getWord(stringLine,2).compare(".float")) dataRoot->ptrData = (void*)(new float[countArray]);
         else if (!getWord(stringLine,2).compare(".double")) dataRoot->ptrData = (void*)(new double[countArray]);
@@ -156,8 +156,19 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
                 countPtr++;
             }
             else if (!getWord(stringLine,2).compare(".asciiz")) {
-                *((string*)dataRoot->ptrData + countPtr) = getWord(stringLine,i);
-
+                while (stringLine[countString] != '\0') {
+                    if (stringLine[countString] == '\"') break;
+                    countString++;
+                }
+                countString++;
+                string stringIn = "";
+                for ( int i = countString ; ; i++) {
+                    if (stringLine[countString] == '\"') break;
+                    stringIn += stringLine[countString];
+                    countString++;
+                }
+                countString++;
+                *((string*)dataRoot->ptrData + countPtr) = stringIn;
                 countPtr++;
             }
             else if(!getWord(stringLine,2).compare(".byte")) {
@@ -212,13 +223,13 @@ FileAssembly::~FileAssembly() {
         }
         Data* temp = seeker1;
         seeker1 = seeker1->next;
-        delete[] temp;
+        delete temp;
     }
     Label* seeker2 = labelRoot;
     while(seeker2 != nullptr) {
         Label* temp = seeker2;
         seeker2 = seeker2->next;
-        delete[] temp;
+        delete temp;
     }
 }
 // int main(){
