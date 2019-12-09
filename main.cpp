@@ -56,7 +56,7 @@ int main(){
             ptr->init(instruction);
             ptr->execute();
         }
-        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
+        reg.setRegisterValue("cpc", reg.getRegisterValue("pc") + 4);
         if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
             cmd.write("pc", reg.getRegisterValue("pc"));
         }
