@@ -67,7 +67,7 @@ void Register::setRegisterValue(string registerName, int _value) {
     while(seeker->next != nullptr) {
         if(!seeker->name.compare(registerName)) {
             seeker->value = _value;
-            seeker->address = nullptr;
+            seeker->address = (int*)seeker->value;
         }
         seeker = seeker->next;
     }

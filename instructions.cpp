@@ -85,7 +85,7 @@ class I_Format : public Instruction {
 protected:
 	string rs;
 	string rt;
-	int imm;
+	int imm = 0;
     string label = "";
     string var = "";
 	const string NAME;
@@ -202,6 +202,14 @@ public:
     void execute();
     ~Mflo();
 };
+class Sltu : public R_Format {
+protected:
+public:
+    Sltu();
+    string getName();
+    void execute();
+    ~Sltu();
+};
 #pragma endregion R-Format command Interface
 #pragma region I-Format command Interface
 
@@ -305,6 +313,13 @@ public:
 	void execute();
 	~Jump();
 };
+class Jal : public J_Format {
+public:
+    Jal();
+    string getName();
+    void execute();
+    ~Jal();
+};
 #pragma endregion J-Format command Interface
 #pragma region R-Format Command Implementation
 Add::Add() : R_Format("add"){}
@@ -394,6 +409,17 @@ void Mflo::execute(){
     cmd.write(rd, reg.getRegisterValue(rd));
 }
 Mflo::~Mflo(){}
+
+Sltu::Sltu() : R_Format("sltu"){}
+string Sltu::getName(){
+    return this->NAME;
+}
+void Sltu::execute(){
+    if(reg.getRegisterValue(rs) < reg.getRegisterValue(rt)) reg.setRegisterValue(rd, 1);
+    else reg.setRegisterValue(rd, 0);
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
+Sltu::~Sltu(){}
 #pragma endregion R-Format Command Implementation
 #pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}
@@ -475,8 +501,14 @@ void Beq::execute() {
             reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
         }
         return;
+    }
+    else {
+        if(reg.getRegisterValue(rs) == reg.getRegisterValue(rt)) {
+            reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);        
+        }
+        return;
     }        
-    if (rs.compare(rt) == 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+    //if (rs.compare(rt) == 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
 }
 Beq::~Beq() {
     cout << "Destructor Beq called\n";
@@ -521,11 +553,16 @@ string Lw::getName() {
 	return this->NAME;
 }
 void Lw::execute() {
-    if (var.compare("")) {
-        reg.setRegisterValue(rs, *(reg.getAddressValue(rt) + imm/4));
+    if (rt.compare("")) {
+        reg.setRegisterValue(rs, *(int*)(reg.getAddressValue(rt) + imm/4));
         cmd.write(rs, reg.getRegisterValue(rs));
         return;
     }
+    else if(var.compare("")) {
+        reg.setRegisterValue(rs, *(int*)(fileIn.getDataAddress(var)));
+        cmd.write(rs, reg.getRegisterValue(rs));
+    }
+
 }
 Lw::~Lw() {
 	cout << "Destructor Lw called\n";
@@ -536,7 +573,7 @@ string Sw::getName() {
 }
 void Sw::execute() {
     if (var.compare("")) {
-        *(reg.getAddressValue(rt) + imm/4) = reg.getRegisterValue(rs);
+        *(int*)(reg.getAddressValue(rt) + imm/4) = reg.getRegisterValue(rs);
         return;
     }
 }
@@ -570,6 +607,19 @@ void Jump::execute() {
     cmd.write("pc",reg.getRegisterValue("pc"));
 }
 Jump::~Jump(){};
+
+Jal::Jal() : J_Format("jal"){};
+string Jal::getName(){
+    return this->NAME;
+}
+void Jal::execute(){
+    int labelJump = fileIn.getLabelAddress(nameLabel);
+    reg.setRegisterValue("$ra", reg.getRegisterValue("pc") + 4);
+    cmd.write("$ra", reg.getRegisterValue("$ra"));
+    reg.setRegisterValue("pc",labelJump - 4);
+    cmd.write("pc", reg.getRegisterValue("pc"));
+}
+Jal::~Jal(){};
 #pragma endregion J-Format Command Implementation
 
 
@@ -584,6 +634,7 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("jr")) return new Jr;
     else if(!name.compare("mfhi")) return new Mfhi;
     else if(!name.compare("mflo")) return new Mflo;
+    else if(!name.compare("sltu")) return new Sltu;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("andi")) return new Andi;
     else if(!name.compare("ori")) return new Ori;
@@ -596,6 +647,7 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("sw")) return new Sw;
     else if(!name.compare("lh")) return new Lh;
     else if(!name.compare("j")) return new Jump;
+    else if(!name.compare("jal")) return new Jal;
     else if(!name.compare("syscall")) {
         sys.execute();
         return nullptr;
@@ -635,5 +687,4 @@ int main(){
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
-
 }

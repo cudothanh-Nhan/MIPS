@@ -24,7 +24,7 @@ protected:
 	string linkFile;
 	string text[100];
 	int numberOfInstruction = 0;
-    Label* labelRoot = nullptr;
+    FileAssembly::Label* labelRoot = nullptr;
     Data* dataRoot = nullptr;
 public:
     FileAssembly(string _linkFile);
@@ -105,7 +105,10 @@ FileAssembly::FileAssembly(string _linkFile) : linkFile(_linkFile){
 // This is for DATA Part
     fileIn.seekg(0);
     string stringLine;
-    getline(fileIn, stringLine);
+    while(1) {
+        getline(fileIn, stringLine);
+        if(!stringLine.compare(".data")) break;
+    }
     
     while(!fileIn.eof()) {
         getline(fileIn,stringLine);

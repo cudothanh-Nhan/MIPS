@@ -309,7 +309,6 @@ Addi::~Addi() {
 	cout << "Destructor Addi called\n";
 }
 
-
 Andi::Andi() : I_Format("andi") {}
 string Andi::getName() {
 	return this->NAME;
@@ -370,10 +369,10 @@ string Lw::getName() {
 	return this->NAME;
 }
 void Lw::execute() {
-	// int temp;
-	// temp = reg.getAddressValue | imm;
-	// reg.setRegisterValue(rs, temp);
-	// cmd.write(rs, reg.getRegisterValue(rs));
+	int temp;
+	temp = reg.getAddressValue | imm;
+	reg.setRegisterValue(rs, temp);
+	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Lw::~Lw() {
 	cout << "Destructor Ordi called\n";
