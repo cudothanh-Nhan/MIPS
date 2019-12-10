@@ -4,4 +4,5 @@
 	a :.word 2, 400000
 .text
 	li $v0, 6
+	li $a0, 200
 	syscall

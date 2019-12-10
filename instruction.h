@@ -40,13 +40,10 @@ void System::execute() {
             break;
         }
         case 6:
-            float temp = 0;
+            double temp;
             cin >> temp;
-            ostringstream streamObj;
-            streamObj << setprecision(10);
-            streamObj << temp;
-            string strObj = streamObj.str();
-            consoleField.append(strObj);
+            string floatNumber = to_string(temp);
+            consoleField.append(floatNumber);
             cop.setCoprocValue("$f0", temp);
             cmd.write("$f0", temp);
             break;
