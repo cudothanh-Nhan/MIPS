@@ -40,12 +40,11 @@ void System::execute() {
             break;
         }
         case 6:
-            double temp;
+            string temp;
             cin >> temp;
-            string floatNumber = to_string(temp);
-            consoleField.append(floatNumber);
-            cop.setCoprocValue("$f0", temp);
-            cmd.write("$f0", temp);
+            consoleField.append(temp);
+            cop.setCoprocValue("$f0", stof(temp));
+            cmd.write("$f0", stof(temp));
             break;
     }
 }
@@ -240,7 +239,14 @@ public:
 	void execute();
 	~Addi();
 };
-
+class Subi : public I_Format {
+protected:
+public:
+	Subi();
+	string getName();
+	void execute();
+	~Subi();
+};
 class Andi : public I_Format {
 protected:
 public:
@@ -346,6 +352,14 @@ public:
     string getName();
     void execute();
     ~Sb();
+};
+class Swcl : public I_Format {
+protected:
+public:
+    Swcl();
+    string getName();
+    void execute();
+    ~Swcl();
 };
 #pragma endregion I-Format Interface
 #pragma region J-Format command Interface
@@ -491,6 +505,19 @@ void Addi::execute() {
 Addi::~Addi() {
 	cout << "Destructor Addi called\n";
 }
+Subi::Subi() : I_Format("subi") {}
+string Subi::getName() {
+	return this->NAME;
+}
+void Subi::execute() {
+	int temp;
+	temp = reg.getRegisterValue(rt) - imm;
+	reg.setRegisterValue(rs, temp);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Subi::~Subi() {
+	cout << "Destructor Subi called\n";
+}
 
 Andi::Andi() : I_Format("andi") {}
 string Andi::getName() {
@@ -618,7 +645,6 @@ void Lw::execute() {
         reg.setRegisterValue(rs, *(int*)(fileIn.getDataAddress(var)));
         cmd.write(rs, reg.getRegisterValue(rs));
     }
-
 }
 Lw::~Lw() {
 	cout << "Destructor Lw called\n";
@@ -627,10 +653,15 @@ Sw::Sw() : I_Format("sw") {}
 string Sw::getName() {
 	return this->NAME;
 }
+
 void Sw::execute() {
-    if (var.compare("")) {
+    if (rt.compare("")) {
         *(int*)(reg.getAddressValue(rt) + imm/4) = reg.getRegisterValue(rs);
         return;
+    }
+    else if(var.compare("")) {
+        *(int*)(fileIn.getDataAddress(var)) = reg.getRegisterValue(rs);
+        return;   
     }
 }
 Sw::~Sw() {
@@ -691,6 +722,24 @@ void Sb::execute() {
 }
 Sb::~Sb() {
 	cout << "Destructor Sb called\n";
+}
+
+Swcl::Swcl() : I_Format("swcl") {}
+string Swcl::getName() {
+	return this->NAME;
+}
+void Swcl::execute() {
+    if (rt.compare("")) {
+        *(float*)(reg.getAddressValue(rt) + imm/4) = cop.getCoprocValue(rs);
+        return;
+    }
+    else if (var.compare("")) {
+        *(float*)(fileIn.getDataAddress(var)) = reg.getRegisterValue(rs);
+        return;
+    }
+}
+Swcl::~Swcl() {
+	cout << "Destructor Swcl called\n";
 }
 #pragma endregion I-Format Command Implementation
 #pragma region J-Format Command Implementation

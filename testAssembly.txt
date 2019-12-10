@@ -1,8 +1,8 @@
 .data
 	array: .word 3, 4, 1, 5, 6
 	max: .word 10
+	b: .float 0
 	a :.word 2, 400000
 .text
-	li $v0, 6
-	li $a0, 200
-	syscall
+	
+	lw $a1, max
