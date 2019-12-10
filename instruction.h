@@ -243,7 +243,14 @@ public:
 	void execute();
 	~Addi();
 };
-
+class Subi : public I_Format {
+protected:
+public:
+	Subi();
+	string getName();
+	void execute();
+	~Subi();
+};
 class Andi : public I_Format {
 protected:
 public:
@@ -493,6 +500,19 @@ void Addi::execute() {
 }
 Addi::~Addi() {
 	cout << "Destructor Addi called\n";
+}
+Subi::Subi() : I_Format("subi") {}
+string Subi::getName() {
+	return this->NAME;
+}
+void Subi::execute() {
+	int temp;
+	temp = reg.getRegisterValue(rt) - imm;
+	reg.setRegisterValue(rs, temp);
+	cmd.write(rs, reg.getRegisterValue(rs));
+}
+Subi::~Subi() {
+	cout << "Destructor Subi called\n";
 }
 
 Andi::Andi() : I_Format("andi") {}

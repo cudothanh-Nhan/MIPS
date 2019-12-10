@@ -16,7 +16,7 @@ int getNumbers(string _instruction) {
 			if ((_instruction[index - 1] == ' ') || (_instruction[index - 1] == ',') || (_instruction[index - 1] == '-')) {
 				if (_instruction[index - 1] == '-') dau = true;
 				while (1) {
-					if (_instruction[index+count + 1] = 'x'){
+					if (_instruction[index+count + 1] == 'x'){
 						while (_instruction[index + count] != '\0'){
 							imm += (_instruction[index + count]);
 							count++;
