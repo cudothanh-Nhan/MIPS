@@ -2,12 +2,13 @@
 #define INSTRUCTION
 #include <iostream>
 #include <iomanip>
-#include <string.h>
+#include <string>
 #include "Serial.h"
 #include "getWord.h"
 #include "getRegister.h"
 #include "getNumber.h"
 #include "register.h"
+#include "coproc.h"
 #include "fileAssembly.h"
 #pragma region INSTRUCTION_INTERFACE
 class System {
@@ -16,8 +17,9 @@ public:
     void execute();
 };
 static Register reg("registerList.txt");
+static Coproc cop("coprocList.txt");
 static Serial cmd;
-static FileAssembly fileIn("testAssembly.txt");
+static FileAssembly fileIn;
 static System sys;
 string System::consoleField = "Console Field: \n";
 void System::execute() {
@@ -29,12 +31,25 @@ void System::execute() {
         case 4:
             consoleField.append((char*)reg.getAddressValue("$a0"));
             break;
-        case 5:
+        case 5: {
             int temp = 0;
             cin >> temp;
             consoleField.append(to_string(temp));
             reg.setRegisterValue("$a0", temp);
             cmd.write("$a0", temp);
+            break;
+        }
+        case 6:
+            float temp = 0;
+            cin >> temp;
+            ostringstream streamObj;
+            streamObj << setprecision(10);
+            streamObj << temp;
+            string strObj = streamObj.str();
+            consoleField.append(strObj);
+            cop.setCoprocValue("$f0", temp);
+            cmd.write("$f0", temp);
+            break;
     }
 }
 class Instruction {
@@ -160,6 +175,14 @@ public:
     string getName();
     void execute();
     ~Sll();
+};
+class Srl : public R_Format {
+protected:
+public:
+    Srl();
+    string getName();
+    void execute();
+    ~Srl();
 };
 class Mult : public R_Format {
 protected:
@@ -380,6 +403,18 @@ void Sll::execute(){
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Sll::~Sll(){}
+
+Srl::Srl() : R_Format("srl"){}
+string Srl::getName(){
+    return this->NAME;
+}
+void Srl::execute(){
+    int temp = reg.getRegisterValue(rt);
+    temp >> shamt;
+    reg.setRegisterValue(rs, temp);
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Srl::~Srl(){}
 
 Mult::Mult() : R_Format("mult"){}
 string Mult::getName(){

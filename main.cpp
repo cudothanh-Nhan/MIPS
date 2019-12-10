@@ -8,6 +8,7 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("subtract")) return new Subtract;
     else if(!name.compare("and")) return new And;
     else if(!name.compare("sll")) return new Sll;
+    else if(!name.compare("srl")) return new Srl;
     else if(!name.compare("mult")) return new Mult;
     else if(!name.compare("div")) return new Div;
     else if(!name.compare("jr")) return new Jr;
@@ -39,18 +40,33 @@ Instruction* navigationCommand(string _instruction){
 void setup() {
     cmd.print();
     reg.init();
+    cop.init();
 }
 
 // Replace int main() with int process()
-int main(){
+int main(int argc, char* argv[]){
+    if(argc == 1) {
+        cout << "You must type the input file\n";
+        return 0;
+    }
+    ifstream checkValidFile;
+    checkValidFile.open(argv[1]);
+    if(checkValidFile.is_open() == 0) {
+        cout << "No file name: " << argv[1] <<'\n';
+        checkValidFile.close();
+        return 0;
+    }
+    checkValidFile.close();
+
+    fileIn.loadLink(argv[1]);
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
-        Instruction* ptr = navigationCommand(instruction);
+
         cout << "------------------------------------------------------" <<'\n';
         cout << "Next Command: " << optimizeString(instruction) << '\n';
         cout << "------------------------------------------------------" << '\n';
-
+        Instruction* ptr = navigationCommand(instruction);
         if(ptr != nullptr) {
             ptr->init(instruction);
             ptr->execute();
