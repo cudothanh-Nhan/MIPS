@@ -31,12 +31,25 @@ void System::execute() {
         case 4:
             consoleField.append((char*)reg.getAddressValue("$a0"));
             break;
-        case 5:
+        case 5: {
             int temp = 0;
             cin >> temp;
             consoleField.append(to_string(temp));
             reg.setRegisterValue("$a0", temp);
             cmd.write("$a0", temp);
+            break;
+        }
+        case 6:
+            float temp = 0;
+            cin >> temp;
+            ostringstream streamObj;
+            streamObj << setprecision(10);
+            streamObj << temp;
+            string strObj = streamObj.str();
+            consoleField.append(strObj);
+            cop.setCoprocValue("$f0", temp);
+            cmd.write("$f0", temp);
+            break;
     }
 }
 class Instruction {

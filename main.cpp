@@ -45,16 +45,28 @@ void setup() {
 
 // Replace int main() with int process()
 int main(int argc, char* argv[]){
+    if(argc == 1) {
+        cout << "You must type the input file\n";
+        return 0;
+    }
+    ifstream checkValidFile;
+    checkValidFile.open(argv[1]);
+    if(checkValidFile.is_open() == 0) {
+        cout << "No file name: " << argv[1] <<'\n';
+        checkValidFile.close();
+        return 0;
+    }
+    checkValidFile.close();
 
-    fileIn.loadLink("testAssembly.txt");
+    fileIn.loadLink(argv[1]);
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
-        Instruction* ptr = navigationCommand(instruction);
+
         cout << "------------------------------------------------------" <<'\n';
         cout << "Next Command: " << optimizeString(instruction) << '\n';
         cout << "------------------------------------------------------" << '\n';
-
+        Instruction* ptr = navigationCommand(instruction);
         if(ptr != nullptr) {
             ptr->init(instruction);
             ptr->execute();
