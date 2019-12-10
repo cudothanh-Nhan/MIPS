@@ -40,15 +40,11 @@ void System::execute() {
             break;
         }
         case 6:
-            float temp = 0;
+            string temp;
             cin >> temp;
-            ostringstream streamObj;
-            streamObj << setprecision(10);
-            streamObj << temp;
-            string strObj = streamObj.str();
-            consoleField.append(strObj);
-            cop.setCoprocValue("$f0", temp);
-            cmd.write("$f0", temp);
+            consoleField.append(temp);
+            cop.setCoprocValue("$f0", stof(temp));
+            cmd.write("$f0", stof(temp));
             break;
     }
 }
@@ -374,6 +370,14 @@ public:
     void execute();
     ~Sb();
 };
+class Swcl : public I_Format {
+protected:
+public:
+    Swcl();
+    string getName();
+    void execute();
+    ~Swcl();
+};
 #pragma endregion I-Format Interface
 #pragma region J-Format command Interface
 class Jump : public J_Format {
@@ -684,7 +688,6 @@ void Lw::execute() {
         reg.setRegisterValue(rs, *(int*)(fileIn.getDataAddress(var)));
         cmd.write(rs, reg.getRegisterValue(rs));
     }
-
 }
 Lw::~Lw() {
 	cout << "Destructor Lw called\n";
@@ -693,10 +696,15 @@ Sw::Sw() : I_Format("sw") {}
 string Sw::getName() {
 	return this->NAME;
 }
+
 void Sw::execute() {
-    if (var.compare("")) {
+    if (rt.compare("")) {
         *(int*)(reg.getAddressValue(rt) + imm/4) = reg.getRegisterValue(rs);
         return;
+    }
+    else if(var.compare("")) {
+        *(int*)(fileIn.getDataAddress(var)) = reg.getRegisterValue(rs);
+        return;   
     }
 }
 Sw::~Sw() {
@@ -757,6 +765,24 @@ void Sb::execute() {
 }
 Sb::~Sb() {
 	cout << "Destructor Sb called\n";
+}
+
+Swcl::Swcl() : I_Format("swcl") {}
+string Swcl::getName() {
+	return this->NAME;
+}
+void Swcl::execute() {
+    if (rt.compare("")) {
+        *(float*)(reg.getAddressValue(rt) + imm/4) = cop.getCoprocValue(rs);
+        return;
+    }
+    else if (var.compare("")) {
+        *(float*)(fileIn.getDataAddress(var)) = reg.getRegisterValue(rs);
+        return;
+    }
+}
+Swcl::~Swcl() {
+	cout << "Destructor Swcl called\n";
 }
 #pragma endregion I-Format Command Implementation
 #pragma region J-Format Command Implementation

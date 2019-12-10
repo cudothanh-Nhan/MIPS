@@ -48,6 +48,7 @@ void setup() {
 
 // Replace int main() with int process()
 int main(int argc, char* argv[]){
+
     if(argc == 1) {
         cout << "You must type the input file\n";
         return 0;
@@ -60,7 +61,8 @@ int main(int argc, char* argv[]){
         return 0;
     }
     checkValidFile.close();
-
+    
+    // START HERE
     fileIn.loadLink(argv[1]);
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
