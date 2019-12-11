@@ -41,9 +41,9 @@
 	srl $t6,$t6,9
 	ori $t6,$t6,0x00800000# t6 = 1bit + fraction B
 	
-###### BUOC 1: So sanh cac truong va chon dau cho phep (+) va (-)
-	slt	$s0,$t3,$t4		#So sanh Exponent A va Exponent B
-    	beq 	$s0,1,A_N_B# A<B
+##### BUOC 1: So sanh cac truong va chon dau cho phep (+) va (-)
+	slt $s0, $t3, $t4 #so sanh
+	beq 	$s0,1,A_N_B# A<B
   	j A_LB_B# A >= B
 A_LB_B:	bne $t3,$t4,A_L_B# A > B
 	slt $s0,$t5,$t6 		#So sanh fraction A va fraction B
@@ -52,17 +52,3 @@ A_LB_B:	bne $t3,$t4,A_L_B# A > B
 	j A_L_B #A>B
 A_L_B:	addi $s6,$t1,0 			#s6 = bit dau cua phep +
 	addi $s7,$t1,0			#s7 = bit dau cua phep -
-	j ThucThi
-A_N_B:
-	addi $s6,$t2,0 		
-	xor $s7,$t2,1			
-	j ThucThi
-SSExp:	beq	$t3,-127,man0		
-	beq $t1,$t2,A_B_B		#So sanh Sign A va sign B
-	addi $s6,$0,0 #A = - B
-	addi $s7,$t1,0			
-	j ThucThi	
-A_B_B:	addi $s6,$t1,1 		
-	xor $s7,$0,0			
-	j ThucThi
-man0:	beq	$t5,0x00800000,result0 #Truong hop 2 so deu bang 0
