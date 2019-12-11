@@ -31,7 +31,7 @@ Coproc::Coproc(string _linkFile) {
 }
 void Coproc::init() {
     ifstream registerList;
-    registerList.open(this->linkFile, istream::binary);
+    registerList.open(this->linkFile);
     int countRegister = 1;
     CoprocNode* preCoprocNode;
     while(!registerList.eof()) {
@@ -53,7 +53,7 @@ void Coproc::init() {
 void Coproc::setCoprocAddress(string registerName, float* ptr) {
     CoprocNode* seeker;
     seeker = root;
-    while(seeker->next != nullptr) {
+    while(seeker != nullptr) {
         if(!seeker->name.compare(registerName)) {
             seeker->address = ptr;
             seeker->value = *(int*)(&seeker->address);
@@ -64,7 +64,7 @@ void Coproc::setCoprocAddress(string registerName, float* ptr) {
 void Coproc::setCoprocValue(string registerName, float _value) {
     CoprocNode* seeker;
     seeker = root;
-    while(seeker->next != nullptr) {
+    while(seeker != nullptr) {
         if(!seeker->name.compare(registerName)) {
             seeker->value = _value;
             seeker->address = (float*)(int)seeker->value;
@@ -75,7 +75,7 @@ void Coproc::setCoprocValue(string registerName, float _value) {
 float* Coproc::getCoprocAddressValue(string registerName) {
     CoprocNode* seeker;
     seeker = root;
-    while(seeker->next != nullptr) {
+    while(seeker != nullptr) {
         if(!seeker->name.compare(registerName)) {
             return seeker->address;
         }
@@ -86,7 +86,7 @@ float* Coproc::getCoprocAddressValue(string registerName) {
 float Coproc::getCoprocValue(string registerName) {
     CoprocNode* seeker;
     seeker = root;
-    while(seeker->next != nullptr) {
+    while(seeker != nullptr) {
         if(!seeker->name.compare(registerName)) {
             return seeker->value;
         }

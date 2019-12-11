@@ -117,6 +117,7 @@ void FileAssembly::loadLink(string _linkFile) {
     string stringLine;
     while(1) {
         getline(fileIn, stringLine);
+        stringLine = getWord(stringLine, 1);
         if(!stringLine.compare(".data")) break;
     }
     while(!fileIn.eof()) {

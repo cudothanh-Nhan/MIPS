@@ -362,6 +362,14 @@ public:
     void execute();
     ~Swc1();
 };
+class Lwc1 : public I_Format {
+protected:
+public:
+    Lwc1();
+    string getName();
+    void execute();
+    ~Lwc1();
+};
 #pragma endregion I-Format Interface
 #pragma region J-Format command Interface
 class Jump : public J_Format {
@@ -735,12 +743,31 @@ void Swc1::execute() {
         return;
     }
     else if (var.compare("")) {
-        *(float*)(fileIn.getDataAddress(var)) = reg.getRegisterValue(rs);
+        *(float*)(fileIn.getDataAddress(var)) = cop.getCoprocValue(rs);
         return;
     }
 }
 Swc1::~Swc1() {
 	cout << "Destructor Swc1 called\n";
+}
+
+Lwc1::Lwc1() : I_Format("lwc1") {}
+string Lwc1::getName() {
+	return this->NAME;
+}
+void Lwc1::execute() {
+    if (rt.compare("")) {
+        cop.setCoprocValue(rs, *(float*)(cop.getCoprocAddressValue(rt) + imm/4));
+        cmd.write(rs, cop.getCoprocValue(rs));
+        return;
+    }
+    else if(var.compare("")) {
+        cop.setCoprocValue(rs, *(float*)(fileIn.getDataAddress(var)));
+        cmd.write(rs, cop.getCoprocValue(rs));
+    }
+}
+Lwc1::~Lwc1() {
+	cout << "Destructor Lwc1 called\n";
 }
 #pragma endregion I-Format Command Implementation
 #pragma region J-Format Command Implementation

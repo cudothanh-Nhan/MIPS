@@ -31,6 +31,7 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("lb")) return new Lb;
     else if(!name.compare("sb")) return new Sb;
     else if(!name.compare("swc1")) return new Swc1;
+    else if(!name.compare("lwc1")) return new Lwc1;
     else if(!name.compare("j")) return new Jump;
     else if(!name.compare("jal")) return new Jal;
     else if(!name.compare("syscall")) {
@@ -48,7 +49,6 @@ void setup() {
 // Replace int main() with int process()
 int main(int argc, char* argv[]){
 
-
     if(argc == 1) {
         cout << "You must type the input file\n";
         return 0;
@@ -60,45 +60,34 @@ int main(int argc, char* argv[]){
         checkValidFile.close();
         return 0;
     }
-    fileIn.loadLink(argv[1]);
     checkValidFile.close();
-    reg.init();
-    cop.init();
-    cop.setCoprocValue("$f0", 9.8f);
-    cout << cop.getCoprocValue("$f0") << '\n';
-    // string ins = "swc1 $f0, soA";
-    // cout << getWord(ins, 1) << '\n';
-    // Instruction* ptr = navigationCommand(ins);
-    // ptr->init(ins);
-    // ptr->execute();
-    // cout << "yes";
-    // cout << *(float*)fileIn.getDataAddress("soA");
-    // // START HERE
-    // cout << "hi";
-    // fileIn.loadLink("testAssembly.txt");
-    // setup();
-    // while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
-    //     string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
 
-    //     cout << "------------------------------------------------------" <<'\n';
-    //     cout << "Next Command: " << optimizeString(instruction) << '\n';
-    //     cout << "------------------------------------------------------" << '\n';
-    //     Instruction* ptr = navigationCommand(instruction);
-    //     if(ptr != nullptr) {
-    //         ptr->init(instruction);
-    //         ptr->execute();
-    //     }
-    //     reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
-    //     if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
-    //         cmd.write("pc", reg.getRegisterValue("pc"));
-    //     }
-    //     cmd.pause();
-    //     if(isExit == 1) break;
-    //     cmd.print();
-    //     cout << sys.consoleField << '\n';
-    // }    
-    // cout << "------------------------------------------------------" << '\n';
-    // cout << "PROGRAM HAS ENDED!!" << '\n';
-    // cout << "------------------------------------------------------" << '\n';
-    // return 0;
+    // START HERE
+
+    fileIn.loadLink("testAssembly.txt");
+    setup();
+    while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+        string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
+
+        cout << "------------------------------------------------------" <<'\n';
+        cout << "Next Command: " << optimizeString(instruction) << '\n';
+        cout << "------------------------------------------------------" << '\n';
+        Instruction* ptr = navigationCommand(instruction);
+        if(ptr != nullptr) {
+            ptr->init(instruction);
+            ptr->execute();
+        }
+        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
+        if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+            cmd.write("pc", reg.getRegisterValue("pc"));
+        }
+        cmd.pause();
+        if(isExit == 1) break;
+        cmd.print();
+        cout << sys.consoleField << '\n';
+    }    
+    cout << "------------------------------------------------------" << '\n';
+    cout << "PROGRAM HAS ENDED!!" << '\n';
+    cout << "------------------------------------------------------" << '\n';
+    return 0;
 }
