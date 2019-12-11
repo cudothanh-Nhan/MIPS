@@ -147,7 +147,14 @@ public:
     void execute();
     ~Add();
 };
-
+class Absolute : public R_Format {
+protected:
+public:
+    Absolute();
+    string getName();
+    void execute();
+    ~Absolute();
+};
 class Subtract : public R_Format {
 protected:
 public:
@@ -432,6 +439,16 @@ void Add::execute(){
     cmd.write(rd, reg.getRegisterValue(rd));
 }
 Add::~Add(){}
+
+Absolute::Absolute() : R_Format("absolute"){}
+string Absolute::getName(){
+    return this->NAME;
+}
+void Absolute::execute(){
+    reg.setRegisterValue(rd, abs(reg.getRegisterValue(rs)));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
+Absolute::~Absolute(){}
 
 Subtract::Subtract() : R_Format("substract"){}
 string Subtract::getName(){
