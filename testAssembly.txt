@@ -1,12 +1,8 @@
 .data
 	a: .float 1
 .text
-<<<<<<< HEAD
-	li $t0, 2
-	mtc1 $t0, $f1
-=======
-A_N_B:
-	li $t1, 1
-	lwc1 $f1, b
-	beq $s0, 0, A_N_B# nothing
->>>>>>> fbfb1f2f5da3b8deecf5ddd2dcbd0301cca46427
+# this is:
+haha:
+	li $a0, 0
+	li $a1, 1
+	j haha

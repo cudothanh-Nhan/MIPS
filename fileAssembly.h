@@ -69,6 +69,7 @@ void FileAssembly::loadLink(string _linkFile) {
             break;
         }
     }
+
 // This is for LABEL part
     fileIn.seekg(0);
     string offsetLine = "";
@@ -81,6 +82,7 @@ void FileAssembly::loadLink(string _linkFile) {
     while(!fileIn.eof()) {
         getline(fileIn, offsetLine);
         string word1 = getWord(offsetLine, 1);
+        if((int)word1.find("#") != -1) word1 = "";
         if((int)offsetLine.find(":") == -1 && word1.compare("")) countAddress++;
         if((int)offsetLine.find(":") != -1) {
 

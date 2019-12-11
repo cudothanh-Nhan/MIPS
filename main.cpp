@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
 
     // START HERE
 
-    fileIn.loadLink("testAssembly.txt");
+    fileIn.loadLink(argv[1]);
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
