@@ -50,5 +50,3 @@ A_LB_B:	bne $t3,$t4,A_L_B# A > B
 	beq $s0,1,A_N_B #  A < B
 	beq $t5,$t6,SSExp # A == B
 	j A_L_B #A>B
-A_L_B:	addi $s6,$t1,0 			#s6 = bit dau cua phep +
-	addi $s7,$t1,0			#s7 = bit dau cua phep -
