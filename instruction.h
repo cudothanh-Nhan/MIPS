@@ -156,7 +156,6 @@ public:
     ~Subtract();
 };
 
-
 class And : public R_Format {
 protected:
 public:
@@ -164,6 +163,24 @@ public:
     string getName();
     void execute();
     ~And();
+};
+
+class Or : public R_Format {
+protected:
+public:
+    Or();
+    string getName();
+    void execute();
+    ~Or();
+};
+
+class Xor : public R_Format {
+protected:
+public:
+    Xor();
+    string getName();
+    void execute();
+    ~Xor();
 };
 class Sll : public R_Format {
 protected:
@@ -402,15 +419,41 @@ Subtract::Subtract() : R_Format("substract"){}
 string Subtract::getName(){
     return this->NAME;
 }
-void Subtract::execute(){}
+void Subtract::execute(){
+    reg.setRegisterValue(rd, reg.getRegisterValue(rs) - reg.getRegisterValue(rt));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
 Subtract::~Subtract(){}
 
 And::And() : R_Format("and"){}
 string And::getName(){
     return this->NAME;
 }
-void And::execute(){}
+void And::execute(){
+    reg.setRegisterValue(rd, reg.getRegisterValue(rs) & reg.getRegisterValue(rt));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
 And::~And(){}
+
+Or::Or() : R_Format("or"){}
+string Or::getName(){
+    return this->NAME;
+}
+void Or::execute(){
+    reg.setRegisterValue(rd, reg.getRegisterValue(rs) | reg.getRegisterValue(rt));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
+Or::~Or(){}
+
+Xor::Xor() : R_Format("Xor"){}
+string Xor::getName(){
+    return this->NAME;
+}
+void Xor::execute(){
+    reg.setRegisterValue(rd, reg.getRegisterValue(rs) ^ reg.getRegisterValue(rt));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
+Xor::~Xor(){}
 
 Sll::Sll() : R_Format("sll"){}
 string Sll::getName(){

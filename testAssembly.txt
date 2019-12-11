@@ -9,4 +9,4 @@
      #Nhap so thu nhat
 	li $v0,6
 	syscall 
-	swc1 $f0,soA	
+	swc1 $f0,soA
