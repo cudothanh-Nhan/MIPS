@@ -20,6 +20,8 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("sltu")) return new Sltu;
     else if(!name.compare("mtc1")) return new Mtc1;
     else if(!name.compare("mfc1")) return new Mfc1;
+    else if(!name.compare("move")) return new Move;
+    else if(!name.compare("mov.s")) return new MoveS;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("subi")) return new Subi;
     else if(!name.compare("andi")) return new Andi;
@@ -68,29 +70,28 @@ int main(int argc, char* argv[]){
     checkValidFile.close();
 
     // START HERE
-
     fileIn.loadLink("testAssembly.txt");
     setup();
-    while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
-        string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
+    // while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+    //     string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
 
-        cout << "------------------------------------------------------" <<'\n';
-        cout << "Next Command: " << optimizeString(instruction) << '\n';
-        cout << "------------------------------------------------------" << '\n';
-        Instruction* ptr = navigationCommand(instruction);
-        if(ptr != nullptr) {
-            ptr->init(instruction);
-            ptr->execute();
-        }
-        reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
-        if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
-            cmd.write("pc", reg.getRegisterValue("pc"));
-        }
-        cmd.pause();
-        if(isExit == 1) break;
-        cmd.print();
-        cout << sys.consoleField << '\n';
-    }
+    //     cout << "------------------------------------------------------" <<'\n';
+    //     cout << "Next Command: " << optimizeString(instruction) << '\n';
+    //     cout << "------------------------------------------------------" << '\n';
+    //     Instruction* ptr = navigationCommand(instruction);
+    //     if(ptr != nullptr) {
+    //         ptr->init(instruction);
+    //         ptr->execute();
+    //     }
+    //     reg.setRegisterValue("pc", reg.getRegisterValue("pc") + 4);
+    //     if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
+    //         cmd.write("pc", reg.getRegisterValue("pc"));
+    //     }
+    //     cmd.pause();
+    //     if(isExit == 1) break;
+    //     cmd.print();
+    //     cout << sys.consoleField << '\n';
+    // }
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
