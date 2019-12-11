@@ -159,19 +159,33 @@ void FileAssembly::loadLink(string _linkFile) {
                 countPtr++;
             }
             else if (!getWord(stringLine,2).compare(".asciiz")) {
-                // while (stringLine[countString] != '\0') {
-                //     if (stringLine[countString] == '\"') break;
-                //     countString++;
-                // }
-                // countString++;
-                // string stringIn = "";
-                // for ( int i = countString ; ; i++) {
-                //     if (stringLine[i] == '\"') break;
-                //     stringIn += stringLine[countString];
-                //     countString++;
-                // }
-                // countString++;
-                *((string*)dataRoot->ptrData + countPtr) = getWord(stringLine, i);
+                while (stringLine[countString] != '\0') {
+                    if (stringLine[countString] == '\"') break;
+                    countString++;
+                }
+                countString++;
+                string stringIn = "";
+                for ( int i = countString ; ; i++) {
+                    if (stringLine[i] == '\"') break;
+                    stringIn += stringLine[countString];
+                    countString++;
+                }
+                countString++;
+                int count = 0;
+                while (stringIn[count] != '\0') {
+                    if (stringIn[count] == '\0') break;
+                    else if ( stringIn[count] == '\\' && stringIn[count+1] == 'n') {
+                        stringIn[count] = '\n';
+                        stringIn.erase(stringIn.begin() + (count + 1));
+                    }
+                    else if ( stringIn[count] == '\\' && stringIn[count+1] == 't') {
+                        stringIn[count] = '\t';
+                        stringIn.erase(stringIn.begin() + (count + 1));
+                    }
+                    count++;        
+                }
+                *((string*)dataRoot->ptrData + countPtr) = stringIn;
+                //*((string*)dataRoot->ptrData + countPtr) = getWord(stringLine, i);
                 countPtr++;
             }
             else if(!getWord(stringLine,2).compare(".byte")) {
