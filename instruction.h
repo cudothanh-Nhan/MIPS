@@ -354,13 +354,13 @@ public:
     void execute();
     ~Sb();
 };
-class Swcl : public I_Format {
+class Swc1 : public I_Format {
 protected:
 public:
-    Swcl();
+    Swc1();
     string getName();
     void execute();
-    ~Swcl();
+    ~Swc1();
 };
 #pragma endregion I-Format Interface
 #pragma region J-Format command Interface
@@ -725,11 +725,11 @@ Sb::~Sb() {
 	cout << "Destructor Sb called\n";
 }
 
-Swcl::Swcl() : I_Format("swcl") {}
-string Swcl::getName() {
+Swc1::Swc1() : I_Format("swc1") {}
+string Swc1::getName() {
 	return this->NAME;
 }
-void Swcl::execute() {
+void Swc1::execute() {
     if (rt.compare("")) {
         *(float*)(reg.getAddressValue(rt) + imm/4) = cop.getCoprocValue(rs);
         return;
@@ -739,8 +739,8 @@ void Swcl::execute() {
         return;
     }
 }
-Swcl::~Swcl() {
-	cout << "Destructor Swcl called\n";
+Swc1::~Swc1() {
+	cout << "Destructor Swc1 called\n";
 }
 #pragma endregion I-Format Command Implementation
 #pragma region J-Format Command Implementation

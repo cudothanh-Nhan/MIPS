@@ -21,7 +21,7 @@ public:
     void init();
     void setCoprocAddress(string registerName, float* ptr);
     void setCoprocValue(string registerName, float value);
-    int getCoprocValue(string registerName);
+    float getCoprocValue(string registerName);
     float* getCoprocAddressValue(string registerName);
 };
 
@@ -83,7 +83,7 @@ float* Coproc::getCoprocAddressValue(string registerName) {
     }
     return nullptr;
 }
-int Coproc::getCoprocValue(string registerName) {
+float Coproc::getCoprocValue(string registerName) {
     CoprocNode* seeker;
     seeker = root;
     while(seeker->next != nullptr) {

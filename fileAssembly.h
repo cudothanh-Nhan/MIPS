@@ -111,6 +111,7 @@ void FileAssembly::loadLink(string _linkFile) {
         if(seeker->labelAddress > (countAddress - 1) * 4) seeker->labelAddress = -1;
         seeker = seeker->next;
     }
+
 // This is for DATA Part
     fileIn.seekg(0);
     string stringLine;
@@ -118,8 +119,8 @@ void FileAssembly::loadLink(string _linkFile) {
         getline(fileIn, stringLine);
         if(!stringLine.compare(".data")) break;
     }
-    
     while(!fileIn.eof()) {
+
         getline(fileIn,stringLine);
         if (!stringLine.compare(".text")) break;
         
@@ -128,7 +129,6 @@ void FileAssembly::loadLink(string _linkFile) {
             if (!getWord(stringLine,i).compare("")) break;
             countArray++;
         }
-        
         Data* temp = dataRoot;
         dataRoot = new Data;
         
