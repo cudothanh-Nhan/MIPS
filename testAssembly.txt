@@ -5,4 +5,3 @@
 haha:
 	li $a0, 0
 	li $a1, 1
-	j haha

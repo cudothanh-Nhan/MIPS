@@ -271,6 +271,22 @@ public:
     void execute();
     ~Mfc1();
 };
+class Move : public R_Format {
+protected:
+public:
+    Move();
+    string getName();
+    void execute();
+    ~Move();
+};
+class MoveS : public R_Format {
+protected:
+public:
+    MoveS();
+    string getName();
+    void execute();
+    ~MoveS();
+};
 #pragma endregion R-Format command Interface
 #pragma region I-Format command Interface
 
@@ -601,6 +617,25 @@ void Mfc1::execute(){
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Mfc1::~Mfc1(){}
+
+Move::Move() : R_Format("move"){}
+string Move::getName(){
+    return this->NAME;
+}
+void Move::execute(){
+    reg.setRegisterValue(rs, reg.getRegisterValue(rt));
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Move::~Move(){}
+MoveS::MoveS() : R_Format("mov.s"){}
+string MoveS::getName(){
+    return this->NAME;
+}
+void MoveS::execute(){
+    cop.setCoprocValue(rs, cop.getCoprocValue(rt));
+    cmd.write(rs, cop.getCoprocValue(rs));
+}
+MoveS::~MoveS(){}
 #pragma endregion R-Format Command Implementation
 #pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}

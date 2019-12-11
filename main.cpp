@@ -20,6 +20,8 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("sltu")) return new Sltu;
     else if(!name.compare("mtc1")) return new Mtc1;
     else if(!name.compare("mfc1")) return new Mfc1;
+    else if(!name.compare("move")) return new Move;
+    else if(!name.compare("mov.s")) return new MoveS;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("subi")) return new Subi;
     else if(!name.compare("andi")) return new Andi;
@@ -68,7 +70,7 @@ int main(int argc, char* argv[]){
     checkValidFile.close();
 
     // START HERE
-
+    cout << "done";
     fileIn.loadLink(argv[1]);
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
