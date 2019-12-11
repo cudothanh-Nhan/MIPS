@@ -40,7 +40,7 @@ void FileAssembly::loadLink(string _linkFile) {
     int i = 0;
     string temp;
     ifstream fileIn;
-    fileIn.open(_linkFile);
+    fileIn.open(_linkFile, ios::binary);
     while (!fileIn.eof()){
         getline(fileIn, temp);
         if (int(temp.find(".text")) >= 0){
