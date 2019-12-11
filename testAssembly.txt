@@ -1,10 +1,6 @@
 .data	
-	textA: .asciiz "+ Nhap so a = "
-	textB: .asciiz "+ Nhap so b = "
 	soA: .float 0
 	soB: .float 0
-	kq1: 	.asciiz " + Ket qua : a + b = "
-	kq2: 	.asciiz " a - b = "
 .text
      #Nhap so thu nhat
 	la $a0,textA 
