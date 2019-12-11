@@ -146,7 +146,14 @@ public:
     void execute();
     ~Add();
 };
-
+class Absolute : public R_Format {
+protected:
+public:
+    Absolute();
+    string getName();
+    void execute();
+    ~Absolute();
+};
 class Subtract : public R_Format {
 protected:
 public:
@@ -245,6 +252,22 @@ public:
     string getName();
     void execute();
     ~Sltu();
+};
+class Move : public R_Format {
+protected:
+public:
+    Move();
+    string getName();
+    void execute();
+    ~Move();
+};
+class MoveS : public R_Format {
+protected:
+public:
+    MoveS();
+    string getName();
+    void execute();
+    ~MoveS();
 };
 #pragma endregion R-Format command Interface
 #pragma region I-Format command Interface
@@ -415,6 +438,16 @@ void Add::execute(){
 }
 Add::~Add(){}
 
+Absolute::Absolute() : R_Format("absolute"){}
+string Absolute::getName(){
+    return this->NAME;
+}
+void Absolute::execute(){
+    reg.setRegisterValue(rd, abs(reg.getRegisterValue(rs)));
+    cmd.write(rd, reg.getRegisterValue(rd));
+}
+Absolute::~Absolute(){}
+
 Subtract::Subtract() : R_Format("substract"){}
 string Subtract::getName(){
     return this->NAME;
@@ -542,6 +575,27 @@ void Sltu::execute(){
     cmd.write(rd, reg.getRegisterValue(rd));
 }
 Sltu::~Sltu(){}
+
+Move::Move() : R_Format("move"){}
+string Move::getName(){
+    return this->NAME;
+}
+void Move::execute(){
+    reg.setRegisterValue(rs, reg.getRegisterValue(rt));
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Move::~Move(){}
+
+MoveS::MoveS() : R_Format("mov.s"){}
+string MoveS::getName(){
+    return this->NAME;
+}
+void MoveS::execute(){
+    cop.setCoprocValue(rs, cop.getCoprocValue(rt));
+    cmd.write(rs, cop.getCoprocValue(rs));
+}
+MoveS::~MoveS(){}
+
 #pragma endregion R-Format Command Implementation
 #pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}

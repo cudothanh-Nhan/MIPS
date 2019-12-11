@@ -1,12 +1,7 @@
 .data
-	textA: .asciiz "NhapSoA"
-	textB: .asciiz "NhapSoB"
-	soA: .float 0
-	soB: .float 0
-	kq1: 	.asciiz "KetQuaA+B"
-	kq2: 	.asciiz "A-B"
+	a: .word 2,4
+	b: .float 3
 .text
-     #Nhap so thu nhat
-	li $v0,6
-	syscall 
-	swc1 $f0,soA
+	li $t1, 1
+	lwc1 $f1, b
+	mov.s $f2, $f1

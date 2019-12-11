@@ -5,6 +5,7 @@ using namespace std;
 Instruction* navigationCommand(string _instruction){
     string name = getWord(_instruction, 1);
     if(!name.compare("add")) return new Add;
+    else if (!name.compare("abs")) return new Absolute;
     else if(!name.compare("subtract")) return new Subtract;
     else if(!name.compare("and")) return new And;
     else if(!name.compare("or")) return new Or;
@@ -17,6 +18,8 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("mfhi")) return new Mfhi;
     else if(!name.compare("mflo")) return new Mflo;
     else if(!name.compare("sltu")) return new Sltu;
+    else if(!name.compare("move")) return new Move;
+    else if (!name.compare("mov.s")) return new MoveS;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("subi")) return new Subi;
     else if(!name.compare("andi")) return new Andi;
@@ -87,7 +90,7 @@ int main(int argc, char* argv[]){
         if(isExit == 1) break;
         cmd.print();
         cout << sys.consoleField << '\n';
-    }    
+    }
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
