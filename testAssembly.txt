@@ -1,8 +1,22 @@
-.data
-	array: .word 3, 4, 1, 5, 6
-	max: .word 10
-	b: .float 0
-	a :.word 2, 400000
+.data	
+	textA: .asciiz "+ Nhap so a = "
+	textB: .asciiz "+ Nhap so b = "
+	soA: .float 0
+	soB: .float 0
+	kq1: 	.asciiz " + Ket qua : a + b = "
+	kq2: 	.asciiz " a - b = "
 .text
-	
-	lw $a1, max
+     #Nhap so thu nhat
+	la $a0,textA 
+	li $v0,4
+	syscall
+	li $v0,6
+	syscall 
+	swc1 $f0,soA	
+    #Nhap so thu 2
+	la $a0,textB 
+	li $v0,4
+	syscall
+	li $v0,6
+	syscall
+	swc1 $f0,soB
