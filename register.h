@@ -15,7 +15,7 @@ protected:
         RegisterNode* next;
     };
     string linkFile;
-    RegisterNode* root;
+    Register::RegisterNode* root;
 public:
     Register(string _linkFile);
     void init();

@@ -44,6 +44,7 @@ void System::execute() {
             string temp;
             cin >> temp;
             consoleField.append(temp);
+            consoleField.append("\n");
             cop.setCoprocValue("$f0", stof(temp));
             cmd.write("$f0", stof(temp));
             break;
@@ -245,6 +246,23 @@ public:
     string getName();
     void execute();
     ~Sltu();
+};
+class Mtc1 : public R_Format {
+protected:
+public:
+    Mtc1();
+    string getName();
+    void execute();
+    ~Mtc1();
+};
+
+class Mfc1 : public R_Format {
+protected:
+public:
+    Mfc1();
+    string getName();
+    void execute();
+    ~Mfc1();
 };
 #pragma endregion R-Format command Interface
 #pragma region I-Format command Interface
@@ -542,6 +560,30 @@ void Sltu::execute(){
     cmd.write(rd, reg.getRegisterValue(rd));
 }
 Sltu::~Sltu(){}
+
+Mtc1::Mtc1() : R_Format("mtc1"){}
+string Mtc1::getName(){
+    return this->NAME;
+}
+void Mtc1::execute(){
+    int temp = reg.getRegisterValue(rs);
+    float* tempPtr = (float*)&temp;
+    cop.setCoprocValue(rt, *tempPtr);
+    cmd.write(rt, cop.getCoprocValue(rt));
+}
+Mtc1::~Mtc1(){}
+
+Mfc1::Mfc1() : R_Format("mfc1"){}
+string Mfc1::getName(){
+    return this->NAME;
+}
+void Mfc1::execute(){
+    float temp = cop.getCoprocValue(rt);
+    int* tempPtr = (int*)&temp;
+    reg.setRegisterValue(rs, *tempPtr);
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Mfc1::~Mfc1(){}
 #pragma endregion R-Format Command Implementation
 #pragma region I-Format Command Implementation
 Addi::Addi() : I_Format("addi") {}

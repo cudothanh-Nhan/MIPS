@@ -17,6 +17,8 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("mfhi")) return new Mfhi;
     else if(!name.compare("mflo")) return new Mflo;
     else if(!name.compare("sltu")) return new Sltu;
+    else if(!name.compare("mtc1")) return new Mtc1;
+    else if(!name.compare("mfc1")) return new Mfc1;
     else if(!name.compare("addi")) return new Addi;
     else if(!name.compare("subi")) return new Subi;
     else if(!name.compare("andi")) return new Andi;
