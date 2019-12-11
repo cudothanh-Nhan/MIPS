@@ -1,7 +1,15 @@
 .data
-	a: .word 2,4
-	b: .float 3
+	textA: .asciiz "+ Nhap so a = "
+	textB: .asciiz "+ Nhap so b = "
+	soA: .float 0
+	soB: .float 0
+	kq1: 	.asciiz " \n+ Ket qua : \n\t a + b = "
+	kq2: 	.asciiz " \n\t a - b = "
 .text
-	li $t1, 1
-	lwc1 $f1, b
-	mov.s $f1, $f2
+     #Nhap so thu nhat
+	la $a0,textA 
+	li $v0,4
+	syscall
+	li $v0,6
+	syscall 
+	swc1 $f0,soA
