@@ -1,52 +1,7 @@
 .data
-	textA: .asciiz "+ Nhap so a = "
-	textB: .asciiz "+ Nhap so b = "
-	soA: .float 0
-	soB: .float 0
-	kq1: 	.asciiz "+Ket qua:a+b="
-	kq2: 	.asciiz "\n\t a - b ="
+	a: .word 2,4
+	b: .float 3
 .text
-     #Nhap so thu nhat
-	la $a0,textA 
-	li $v0,4
-	syscall
-	li $v0,6
-	syscall 
-	swc1 $f0,soA	
-    #Nhap so thu 2
-	la $a0,textB 
-	li $v0,4
-	syscall
-	li $v0,6
-	syscall
-	swc1 $f0,soB
-    #Chuyen du lieu sang ma nhi phan
-	lw $a1,soA
-	lw $a2,soB		
-    #Tach cac truong cua ma nhi phan 32 bit
-    	srl $t1,$a1,31			#truong sign cua so A = $t1
-    	srl $t2,$a2,31			#truong sign cua so B = $t2
-    	move 	$t8,$t1
-	move 	$t9,$t2
-     	sll $t3,$a1,1 			#Tim truong Exponent cua so A
-	srl $t3,$t3,24
-	subi $t3,$t3,127#Exponent A = t3
-	sll $t4,$a2,1 			#Tim truong Exponent cua so B
-	srl $t4,$t4,24
-	subi $t4,$t4,127#Exponent B = t4 	
-	sll $t5,$a1,9			#Tim truong fraction cua so A
-	srl $t5,$t5,9
-	ori $t5,$t5,0x00800000# t5 = 1bit + fraction A 
-	sll $t6,$a2,9			#Tim truong fraction cua so B
-	srl $t6,$t6,9
-	ori $t6,$t6,0x00800000# t6 = 1bit + fraction B
-	
-##### BUOC 1: So sanh cac truong va chon dau cho phep (+) va (-)
-	slt $s0, $t3, $t4 #so sanh
-	beq 	$s0,1,A_N_B# A<B
-  	j A_LB_B# A >= B
-A_LB_B:	bne $t3,$t4,A_L_B# A > B
-	slt $s0,$t5,$t6 		#So sanh fraction A va fraction B
-	beq $s0,1,A_N_B #  A < B
-	beq $t5,$t6,SSExp # A == B
-	j A_L_B #A>B
+	li $t1, 1
+	lwc1 $f1, b
+	mov.s $f1, $f2
