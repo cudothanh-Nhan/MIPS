@@ -70,7 +70,6 @@ int main(int argc, char* argv[]){
     checkValidFile.close();
 
     // START HERE
-    cout << "done";
     fileIn.loadLink(argv[1]);
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
