@@ -28,6 +28,9 @@ void System::execute() {
     switch(option) {
         case 1:
             consoleField.append(to_string(reg.getRegisterValue("$a0")));
+            break;
+        case 2:
+            consoleField.append(to_string(cop.getCoprocValue("$f12")));
             break; 
         case 4:
             consoleField.append((char*)reg.getAddressValue("$a0"));
@@ -51,7 +54,6 @@ void System::execute() {
     }
 }
 class Instruction {
-protected:
 public:
     Instruction(){};
     virtual void init(string _instruction) = 0;
@@ -68,6 +70,7 @@ protected:
     string rt;
     int shamt;
     const string NAME;
+    bool full = 1;
 public:
     R_Format(string _name) : NAME(_name){}
     void init(string _instruction);
@@ -80,24 +83,27 @@ void R_Format::init(string _instruction) {
         rd = getRegister(_instruction, 1);
         rs = getRegister(_instruction, 2);
         rt = getRegister(_instruction, 3);
+        full = 1;
     }
     else if(getRegister(_instruction, 2).compare("")) {
         rs = getRegister(_instruction, 1);
         rd = rs;
-        rt = getRegister(_instruction, 2);    
+        rt = getRegister(_instruction, 2);
+        full = 0;    
     }
     else {
         rt = "";
         rs = getRegister(_instruction, 1);
         rd = rs;
+        full = -1;
     }
     shamt = getNumbers(_instruction);
 }
 
 class I_Format : public Instruction {
 protected:
-	string rs;
-	string rt;
+	string rs = "";
+	string rt = "";
 	int imm = 0;
     string label = "";
     string var = "";
@@ -111,8 +117,8 @@ public:
 	void init(string _instruction);
 };
 void I_Format::init(string _instruction){
-	rs = getRegister(_instruction, 1);
-	rt = getRegister(_instruction, 2);
+	this->rs = getRegister(_instruction, 1);
+	this->rt = getRegister(_instruction, 2);
 	imm = getNumbers(_instruction);
     if (getWord(_instruction, 4) != ""){
         label = getWord(_instruction, 4);
@@ -466,7 +472,7 @@ void Absolute::execute(){
 }
 Absolute::~Absolute(){}
 
-Subtract::Subtract() : R_Format("substract"){}
+Subtract::Subtract() : R_Format("sub"){}
 string Subtract::getName(){
     return this->NAME;
 }
@@ -501,8 +507,14 @@ string Xor::getName(){
     return this->NAME;
 }
 void Xor::execute(){
-    reg.setRegisterValue(rd, reg.getRegisterValue(rs) ^ reg.getRegisterValue(rt));
-    cmd.write(rd, reg.getRegisterValue(rd));
+    if(full == 1) {
+        reg.setRegisterValue(rd, reg.getRegisterValue(rs) ^ reg.getRegisterValue(rt));
+        cmd.write(rd, reg.getRegisterValue(rd));
+    }
+    else {
+        reg.setRegisterValue(rs, reg.getRegisterValue(rt) ^ shamt);
+        cmd.write(rd, reg.getRegisterValue(rd));   
+    }
 }
 Xor::~Xor(){}
 
@@ -512,7 +524,7 @@ string Sll::getName(){
 }
 void Sll::execute(){
     int temp = reg.getRegisterValue(rt);
-    temp << shamt;
+    temp = temp << shamt;
     reg.setRegisterValue(rs, temp);
     cmd.write(rs, reg.getRegisterValue(rs));
 }
@@ -523,8 +535,8 @@ string Srl::getName(){
     return this->NAME;
 }
 void Srl::execute(){
-    int temp = reg.getRegisterValue(rt);
-    temp >> shamt;
+    unsigned int temp = reg.getRegisterValue(rt);
+    temp = temp >> shamt;
     reg.setRegisterValue(rs, temp);
     cmd.write(rs, reg.getRegisterValue(rs));
 }
@@ -659,7 +671,7 @@ void Subi::execute() {
 	int temp;
 	temp = reg.getRegisterValue(rt) - imm;
 	reg.setRegisterValue(rs, temp);
-	cmd.write(rs, reg.getRegisterValue(rs));
+	cmd.write(rs, reg.getRegisterValue(rs)); 
 }
 Subi::~Subi() {
 	cout << "Destructor Subi called\n";
@@ -726,6 +738,7 @@ string Beq::getName() {
 }
 void Beq::execute() {
     if (!rt.compare("")) {
+
         if (reg.getRegisterValue(rs) == imm){
             reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
         }
