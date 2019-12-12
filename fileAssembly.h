@@ -138,11 +138,10 @@ void FileAssembly::loadLink(string _linkFile) {
         dataRoot->name = getWord(stringLine,1);
         dataRoot->type = getWord(stringLine,2);
         int countPtr = 0;
-        int countString = 0;
         if (!getWord(stringLine,2).compare(".word") ) dataRoot->ptrData = (void*)(new int[countArray]);
         else if (!getWord(stringLine,2).compare(".float")) dataRoot->ptrData = (void*)(new float[countArray]);
         else if (!getWord(stringLine,2).compare(".double")) dataRoot->ptrData = (void*)(new double[countArray]);
-        else if (!getWord(stringLine,2).compare(".asciiz")) dataRoot->ptrData = (void*)(new string[countArray]);
+        else if (!getWord(stringLine,2).compare(".asciiz")) ;
         else if (!getWord(stringLine,2).compare(".byte")) dataRoot->ptrData = (void*)(new char[countArray]);
         
         for (int i = 3 ; i <= 50 ; i++) {
@@ -161,32 +160,39 @@ void FileAssembly::loadLink(string _linkFile) {
                 countPtr++;
             }
             else if (!getWord(stringLine,2).compare(".asciiz")) {
-                // while (stringLine[countString] != '\0') {
-                //     if (stringLine[countString] == '\"') break;
-                //     countString++;
-                // }
-                // countString++;
-                // string stringIn = "";
-                // while ( stringLine[countString] != '\"') {
-                //     stringIn += stringLine[countString];
-                //     countString++;
-                // }
-                // countString++;
-                // int count = 0;
-                // while (stringIn[count] != '\0') {
-                //     if ( stringIn[count] == '\\' && stringIn[count+1] == 'n') {
-                //         stringIn[count] = '\n';
-                //         stringIn.erase(stringIn.begin() + (count + 1));
-                //     }
-                //     else if ( stringIn[count] == '\\' && stringIn[count+1] == 't') {
-                //         stringIn[count] = '\t';
-                //         stringIn.erase(stringIn.begin() + (count + 1));
-                //     }
-                //     count++;        
-                // }
-                //*((string*)dataRoot->ptrData + countPtr) = stringIn;
-                *((string*)dataRoot->ptrData + countPtr) = getWord(stringLine, i);
-                countPtr++;
+                int countString = 0;
+                while (1) {
+                    if (stringLine[countString] == '\"') break;
+                    countString++;
+                }
+                countString++;
+                string stringIn = "";
+                while (1) {
+                    if (stringLine[countString] == '\"') break;
+                    stringIn += stringLine[countString];
+                    countString++;
+                }
+                countString++;
+                int count = 0;
+                while (stringIn[count] != '\0') {
+                    if ( stringIn[count] == '\\' && stringIn[count+1] == 'n') {
+                        stringIn[count] = '\n';
+                        stringIn.erase(stringIn.begin() + (count + 1));
+                    }
+                    else if ( stringIn[count] == '\\' && stringIn[count+1] == 't') {
+                        stringIn[count] = '\t';
+                        stringIn.erase(stringIn.begin() + (count + 1));
+                    }
+                    count++;        
+                }
+                char* temp = new char[count + 1];
+                int offset = 0;
+                while(stringIn[offset] != '\0') {
+                   *(temp + offset) = stringIn[offset];
+                   offset++; 
+                }
+                *(temp + offset) = '\0';
+                dataRoot->ptrData = temp;
             }
             else if(!getWord(stringLine,2).compare(".byte")) {
                 *((char*)dataRoot->ptrData + countPtr) = getWord(stringLine,i)[0];
@@ -215,7 +221,7 @@ void* FileAssembly::getDataAddress(string _name) {
     Data* seeker = dataRoot;
     while (seeker != nullptr) {
         if (!seeker->name.compare(_name)) {
-            if(!seeker->type.compare(".asciiz")) return (void*)((char*)seeker->ptrData + 8) ;
+            //if(!seeker->type.compare(".asciiz")) return (void*)((char*)seeker->ptrData + 8) ;
             return seeker->ptrData;
         }
         seeker = seeker->next;
@@ -234,7 +240,7 @@ FileAssembly::~FileAssembly() {
             delete[] (double*)seeker1->ptrData;
         }
         else if (!seeker1->type.compare(".asciiz")) {
-            delete[] (string*)seeker1->ptrData;
+            delete[] (char*)seeker1->ptrData;
         }
         else if (!seeker1->type.compare(".byte")) {
             delete[] (char*)seeker1->ptrData;

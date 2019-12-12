@@ -1,5 +1,5 @@
 .data
-	prompt1: .asciiz "first"
+	prompt1: .asciiz "first word \n \t jflksjlklskjfs"
 	prompt2: .asciiz "second"
 	prompt3: .asciiz "Sum:"
 	prompt4: .asciiz "Sub:"
