@@ -1,34 +1,4 @@
 .data
-<<<<<<< HEAD
-	textA: .asciiz "+ Nhap so a = "
-	textB: .asciiz "+ Nhap so b = "
-	soA: .float 0
-	soB: .float 0
-	kq1: 	.asciiz "a + b = "
-	kq2: 	.asciiz "a - b = "
-.text
-     #Nhap so thu nhat
-	la $a0,textA 
-	li $v0,4
-	syscall
-	li $v0,6
-	syscall 
-	swc1 $f0,soA	
-    #Nhap so thu 2
-	la $a0,textB 
-	li $v0,4
-	syscall
-	li $v0,6
-	syscall
-	swc1 $f0,soB
-	 #Chuyen du lieu sang ma nhi phan
-	 lw $a1,soA
-	lw $a2,soBs
-	li $t1, 200
-	#Tach cac truong cua ma nhi phan 32 bit
-    	srl $t1,$a1,31			#truong sign cua so A = $t1
-    	srl $t2,$a2,31			#truong sign cua so B = $t2
-=======
 	prompt1: .asciiz "first"
 	prompt2: .asciiz "second"
 	prompt3: .asciiz "Sum:"
@@ -228,4 +198,3 @@ main:
 	jr	$ra
 	
 	END:
->>>>>>> 4aae44e25dfb53934098d92cbfbf682813e41586

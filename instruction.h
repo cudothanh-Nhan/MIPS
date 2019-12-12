@@ -434,6 +434,54 @@ public:
     void execute();
     ~Lwc1();
 };
+class Bgez : public I_Format {
+protected:
+public:
+    Bgez();
+    string getName();
+    void execute();
+    ~Bgez();
+};
+class Beqz : public I_Format {
+protected:
+public:
+    Beqz();
+    string getName();
+    void execute();
+    ~Beqz();
+};
+class Bgt : public I_Format {
+protected:
+public:
+    Bgt();
+    string getName();
+    void execute();
+    ~Bgt();
+};
+class Bge : public I_Format {
+protected:
+public:
+    Bge();
+    string getName();
+    void execute();
+    ~Bge();
+};
+class Blt : public I_Format {
+protected:
+public:
+    Blt();
+    string getName();
+    void execute();
+    ~Blt();
+};
+class Ble : public I_Format {
+protected:
+public:
+    Ble();
+    string getName();
+    void execute();
+    ~Ble();
+};
 #pragma endregion I-Format Interface
 #pragma region J-Format command Interface
 class Jump : public J_Format {
@@ -918,6 +966,66 @@ void Lwc1::execute() {
 }
 Lwc1::~Lwc1() {
 	cout << "Destructor Lwc1 called\n";
+}
+Bgez::Bgez() : I_Format("bgez") {}
+string Bgez::getName() {
+	return this->NAME;
+}
+void Bgez::execute() {
+    if (reg.getRegisterValue(rs) >= 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Bgez::~Bgez() {
+	cout << "Destructor Bgez called\n";
+}
+Beqz::Beqz() : I_Format("beqz") {}
+string Beqz::getName() {
+	return this->NAME;
+}
+void Beqz::execute() {
+    if (reg.getRegisterValue(rs) == 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Beqz::~Beqz() {
+	cout << "Destructor Beqz called\n";
+}
+Bgt::Bgt() : I_Format("bgt") {}
+string Bgt::getName() {
+	return this->NAME;
+}
+void Bgt::execute() {
+    if (reg.getRegisterValue(rs) > reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Bgt::~Bgt() {
+	cout << "Destructor Bgt called\n";
+}
+Bge::Bge() : I_Format("bge") {}
+string Bge::getName() {
+	return this->NAME;
+}
+void Bge::execute() {
+    if (reg.getRegisterValue(rs) >= reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Bge::~Bge() {
+	cout << "Destructor Bge called\n";
+}
+Blt::Blt() : I_Format("blt") {}
+string Blt::getName() {
+	return this->NAME;
+}
+void Blt::execute() {
+    if (reg.getRegisterValue(rs) < reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Blt::~Blt() {
+	cout << "Destructor Blt called\n";
+}
+Ble::Ble() : I_Format("ble") {}
+string Ble::getName() {
+	return this->NAME;
+}
+void Ble::execute() {
+    if (reg.getRegisterValue(rs) <= reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+}
+Ble::~Ble() {
+	cout << "Destructor Ble called\n";
 }
 #pragma endregion I-Format Command Implementation
 #pragma region J-Format Command Implementation
