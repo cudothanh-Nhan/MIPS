@@ -8,10 +8,12 @@ Instruction* navigationCommand(string _instruction){
     else if (!name.compare("abs")) return new Absolute;
     else if(!name.compare("sub") || (!name.compare("subu"))) return new Subtract;
     else if(!name.compare("and")) return new And;
+    else if(!name.compare("not")) return new Not;
     else if(!name.compare("or")) return new Or;
     else if(!name.compare("xor")) return new Xor;
     else if(!name.compare("sll")) return new Sll;
     else if(!name.compare("srl")) return new Srl;
+    else if(!name.compare("sra")) return new Sra;
     else if(!name.compare("mult")) return new Mult;
     else if(!name.compare("div")) return new Div;
     else if(!name.compare("jr")) return new Jr;
@@ -57,6 +59,7 @@ Instruction* navigationCommand(string _instruction){
 void setup() {
     cmd.print();
     reg.init();
+    cmd.write("$sp", reg.getRegisterValue("$sp"));
     cop.init();
 }
 
@@ -71,7 +74,7 @@ int main(int argc, char* argv[]){
         cout << "------------------------------------------------------" <<'\n';
         cout << "Next Command: " << optimizeString(instruction) << '\n';
         cout << "------------------------------------------------------" << '\n';
-        cmd.pause();
+        //cmd.pause();
         Instruction* ptr = navigationCommand(instruction);
         if(ptr != nullptr) {
             ptr->init(instruction);
@@ -83,14 +86,14 @@ int main(int argc, char* argv[]){
         }
 
         if(isExit == 1) break;
-        cmd.print();
+        //cmd.print();
         cout << sys.consoleField << '\n';
         delete ptr;
     }
-    // int a = 0;
+
+    // int a;
     // cin >> a;
-    // cout << fileIn.getLabelAddress("Sign") << '\n';
-    // cout << fileIn.getLabelAddress("trans") << '\n';
+    // cout << fileIn.getLabelAddress("SAME_SIGN") << '\n';
     // cout << fileIn.getInstruction(a) << '\n';
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';

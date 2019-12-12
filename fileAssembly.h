@@ -22,11 +22,7 @@ protected:
         Data* next = nullptr;
     };
 	string linkFile;
-<<<<<<< HEAD
-	string text[200];
-=======
 	string text[1000];
->>>>>>> 4aae44e25dfb53934098d92cbfbf682813e41586
 	int numberOfInstruction = 0;
     FileAssembly::Label* labelRoot = nullptr;
     Data* dataRoot = nullptr;
@@ -129,10 +125,11 @@ void FileAssembly::loadLink(string _linkFile) {
     while(!fileIn.eof()) {
 
         getline(fileIn,stringLine);
-        if (!stringLine.compare(".text")) break;
+        string test = getWord(stringLine,1);
+        if (!test.compare(".text")) break;
         
         int countArray = 1;
-        for (int i = 3; i <= 50; i++) {
+        for (int i = 3; i <= 500; i++) {
             if (!getWord(stringLine,i).compare("")) break;
             countArray++;
         }
@@ -148,7 +145,7 @@ void FileAssembly::loadLink(string _linkFile) {
         else if (!getWord(stringLine,2).compare(".asciiz")) ;
         else if (!getWord(stringLine,2).compare(".byte")) dataRoot->ptrData = (void*)(new char[countArray]);
         
-        for (int i = 3 ; i <= 50 ; i++) {
+        for (int i = 3 ; i <= 500 ; i++) {
             if (!getWord(stringLine,i).compare("")) break;
 
             if (!getWord(stringLine,2).compare(".word") ) {
@@ -222,14 +219,18 @@ int FileAssembly::getLabelAddress(string _label) {
     return -1;
 }
 void* FileAssembly::getDataAddress(string _name) {
+    _name = getWord(_name, 1);
     Data* seeker = dataRoot;
     while (seeker != nullptr) {
+        cout << seeker->name << ' ' ;
         if (!seeker->name.compare(_name)) {
+            cout << "data" <<'\n';
             //if(!seeker->type.compare(".asciiz")) return (void*)((char*)seeker->ptrData + 8) ;
             return seeker->ptrData;
         }
         seeker = seeker->next;
     }
+    return nullptr;
 }
 FileAssembly::~FileAssembly() {
     Data* seeker1 = dataRoot;

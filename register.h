@@ -10,19 +10,23 @@ class Register {
 protected:
     struct RegisterNode {
         string name;
-        int value;
+        long long int value;
         int* address;
         RegisterNode* next;
     };
+    int* ptr;
     string linkFile;
     Register::RegisterNode* root;
 public:
     Register(string _linkFile);
     void init();
     void setRegisterAddress(string registerName, int* ptr);
-    void setRegisterValue(string registerName, int value);
-    int getRegisterValue(string registerName);
+    void setRegisterValue(string registerName, long long int value);
+    long long int getRegisterValue(string registerName);
     int* getAddressValue(string registerName);
+    ~Register() {
+        delete[] ptr;
+    }
 };
 
 Register::Register(string _linkFile) {
@@ -39,6 +43,11 @@ void Register::init() {
         newNode->value = 0;
         newNode->address = nullptr;
         registerList >> newNode->name;
+        if(!newNode->name.compare("$sp")) {
+            newNode->address = new int[100];
+            ptr = newNode->address;
+            newNode->value = (int)newNode->address;
+        }
         if(countRegister == 1) {
             root = newNode;
             newNode->next = nullptr;
@@ -62,7 +71,7 @@ void Register::setRegisterAddress(string registerName, int* ptr) {
         seeker = seeker->next;
     }
 }
-void Register::setRegisterValue(string registerName, int _value) {
+void Register::setRegisterValue(string registerName, long long int _value) {
     registerName = getWord(registerName, 1);
     RegisterNode* seeker;
     seeker = root;
@@ -86,7 +95,7 @@ int* Register::getAddressValue(string registerName) {
     }
     return nullptr;
 }
-int Register::getRegisterValue(string registerName) {
+long long int Register::getRegisterValue(string registerName) {
     registerName = getWord(registerName, 1);
     RegisterNode* seeker;
     seeker = root;

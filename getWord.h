@@ -7,7 +7,7 @@ using namespace std;
 string getWord(string _name, int n) {
     int count = 0;
     while (_name[count] != '\0') {
-        if (_name[count] == ',' || _name[count] == ':' || _name[count] == '\'' ) _name[count] = ' ';
+        if (_name[count] == ',' || _name[count] == ':' || _name[count] == '\'' || _name[count] == '\t' || _name[count] == '\n' ) _name[count] = ' ';
         count ++;
     }
     stringstream nameStream(_name);

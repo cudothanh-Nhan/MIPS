@@ -36,14 +36,14 @@ void System::execute() {
             consoleField.append((char*)reg.getAddressValue("$a0"));
             break;
         case 5: {
-            int temp = 0;
+            long long int temp = 0;
             cin >> temp;
             consoleField.append(to_string(temp));
             reg.setRegisterValue("$a0", temp);
             cmd.write("$a0", temp);
             break;
         }
-        case 6:
+        case 6: {
             string temp;
             cin >> temp;
             consoleField.append(temp);
@@ -51,6 +51,11 @@ void System::execute() {
             cop.setCoprocValue("$f0", stof(temp));
             cmd.write("$f0", stof(temp));
             break;
+        }
+        case 10: {
+            isExit = 1;
+            break;
+        }
     }
 }
 class Instruction {
@@ -104,7 +109,7 @@ class I_Format : public Instruction {
 protected:
 	string rs = "";
 	string rt = "";
-	int imm = 0;
+	long long int imm = 0;
     string label = "";
     string var = "";
 	const string NAME;
@@ -119,7 +124,9 @@ public:
 void I_Format::init(string _instruction){
 	this->rs = getRegister(_instruction, 1);
 	this->rt = getRegister(_instruction, 2);
+    label = getWord(_instruction, 3);
 	imm = getNumbers(_instruction);
+    
     if (getWord(_instruction, 4) != ""){
         label = getWord(_instruction, 4);
     }
@@ -178,7 +185,14 @@ public:
     void execute();
     ~And();
 };
-
+class Not : public R_Format {
+protected:
+public:
+    Not();
+    string getName();
+    void execute();
+    ~Not();
+};
 class Or : public R_Format {
 protected:
 public:
@@ -211,6 +225,14 @@ public:
     string getName();
     void execute();
     ~Srl();
+};
+class Sra : public R_Format {
+protected:
+public:
+    Sra();
+    string getName();
+    void execute();
+    ~Sra();
 };
 class Mult : public R_Format {
 protected:
@@ -540,6 +562,16 @@ void And::execute(){
 }
 And::~And(){}
 
+Not::Not() : R_Format("not"){}
+string Not::getName(){
+    return this->NAME;
+}
+void Not::execute(){
+    reg.setRegisterValue(rs, ~reg.getRegisterValue(rt));
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Not::~Not(){}
+
 Or::Or() : R_Format("or"){}
 string Or::getName(){
     return this->NAME;
@@ -571,7 +603,7 @@ string Sll::getName(){
     return this->NAME;
 }
 void Sll::execute(){
-    int temp = reg.getRegisterValue(rt);
+    long long int temp = reg.getRegisterValue(rt);
     temp = temp << shamt;
     reg.setRegisterValue(rs, temp);
     cmd.write(rs, reg.getRegisterValue(rs));
@@ -583,12 +615,24 @@ string Srl::getName(){
     return this->NAME;
 }
 void Srl::execute(){
-    unsigned int temp = reg.getRegisterValue(rt);
+    unsigned long long int temp = reg.getRegisterValue(rt);
     temp = temp >> shamt;
     reg.setRegisterValue(rs, temp);
     cmd.write(rs, reg.getRegisterValue(rs));
 }
 Srl::~Srl(){}
+
+Sra::Sra() : R_Format("sra"){}
+string Sra::getName(){
+    return this->NAME;
+}
+void Sra::execute(){
+    long long int temp = reg.getRegisterValue(rt);
+    temp = temp >> shamt;
+    reg.setRegisterValue(rs, temp);
+    cmd.write(rs, reg.getRegisterValue(rs));
+}
+Sra::~Sra(){}
 
 Mult::Mult() : R_Format("mult"){}
 string Mult::getName(){
@@ -619,7 +663,7 @@ string Jr::getName(){
     return this->NAME;
 }
 void Jr::execute(){
-    reg.setRegisterValue("pc", fileIn.getLabelAddress(rs));
+    reg.setRegisterValue("pc", reg.getRegisterValue(rs));
 }
 Jr::~Jr(){}
 
@@ -659,7 +703,7 @@ string Mtc1::getName(){
     return this->NAME;
 }
 void Mtc1::execute(){
-    int temp = reg.getRegisterValue(rs);
+    long long int temp = reg.getRegisterValue(rs);
     float* tempPtr = (float*)&temp;
     cop.setCoprocValue(rt, *tempPtr);
     cmd.write(rt, cop.getCoprocValue(rt));
@@ -703,26 +747,22 @@ string Addi::getName() {
 	return this->NAME;
 }
 void Addi::execute() {
-	int temp;
-	temp = reg.getRegisterValue(rt) + imm;
-	reg.setRegisterValue(rs, temp);
+	reg.setRegisterValue(rs, reg.getRegisterValue(rt) + imm);
 	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Addi::~Addi() {
-	cout << "Destructor Addi called\n";
+;
 }
 Subi::Subi() : I_Format("subi") {}
 string Subi::getName() {
 	return this->NAME;
 }
 void Subi::execute() {
-	int temp;
-	temp = reg.getRegisterValue(rt) - imm;
-	reg.setRegisterValue(rs, temp);
+	reg.setRegisterValue(rs, reg.getRegisterValue(rt) - imm);
 	cmd.write(rs, reg.getRegisterValue(rs)); 
 }
 Subi::~Subi() {
-	cout << "Destructor Subi called\n";
+	;
 }
 
 Andi::Andi() : I_Format("andi") {}
@@ -730,13 +770,11 @@ string Andi::getName() {
 	return this->NAME;
 }
 void Andi::execute() {
-	int temp;
-	temp = reg.getRegisterValue(rt) & imm;
-	reg.setRegisterValue(rs, temp);
+	reg.setRegisterValue(rs, reg.getRegisterValue(rt) & imm);
 	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Andi::~Andi() {
-	cout << "Destructor Andi called\n";
+    ;
 }
 
 Ori::Ori() : I_Format("ori") {}
@@ -744,13 +782,11 @@ string Ori::getName() {
 	return this->NAME;
 }
 void Ori::execute() {
-	int temp;
-	temp = reg.getRegisterValue(rt) | imm;
-	reg.setRegisterValue(rs, temp);
+	reg.setRegisterValue(rs, reg.getRegisterValue(rt) | imm);
 	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Ori::~Ori() {
-	cout << "Destructor Ori called\n";
+    ;
 }
 
 Slti::Slti() : I_Format("slti") {}
@@ -764,7 +800,7 @@ void Slti::execute() {
 	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Slti::~Slti() {
-	cout << "Destructor Slti called\n";
+	;
 }
 
 Li::Li() : I_Format("li") {}
@@ -777,7 +813,7 @@ void Li::execute() {
 	cmd.write(rs, reg.getRegisterValue(rs));
 }
 Li::~Li() {
-	cout << "Destructor Li called\n";
+;
 }
 
 Beq::Beq() : I_Format("beq") {}
@@ -801,7 +837,7 @@ void Beq::execute() {
     //if (rs.compare(rt) == 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
 }
 Beq::~Beq() {
-    cout << "Destructor Beq called\n";
+;
 }
 
 Bne::Bne() : I_Format("bne") {}
@@ -815,18 +851,30 @@ void Bne::execute() {
         }
         return;
     }
-    if (rs.compare(rt) != 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+    else {
+        if(reg.getRegisterValue(rs) != reg.getRegisterValue(rt)) {
+            reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);        
+        }
+        return;
+    }
 }
 Bne::~Bne() {
-    cout << "Destructor Bne called\n";
+;
 }
 La::La() : I_Format("la") {};
 string La::getName(){
     return this->NAME;
 }
 void La::execute() {
-    if ((var.compare("")) && (imm == 0)){
+    var = getWord(var, 1);
+    cout << var << '\n';
+Again:
+    char a = getchar();
+    if(a != 'k') goto Again;
+    if ((var.compare(""))){
+        cout << "hihi" << ';' << var << ';' ;
         reg.setRegisterAddress(rs, (int*)(fileIn.getDataAddress(var)));
+        cout << *(int*)fileIn.getDataAddress(var) << '\n';
         cmd.write(rs, reg.getRegisterValue(rs));
         return;
     }
@@ -836,7 +884,7 @@ void La::execute() {
     }
 }
 La::~La(){
-    cout << "Destructor La called\n";
+;
 }
 Lw::Lw() : I_Format("lw") {}
 string Lw::getName() {
@@ -854,7 +902,7 @@ void Lw::execute() {
     }
 }
 Lw::~Lw() {
-	cout << "Destructor Lw called\n";
+;
 }
 Sw::Sw() : I_Format("sw") {}
 string Sw::getName() {
@@ -872,7 +920,7 @@ void Sw::execute() {
     }
 }
 Sw::~Sw() {
-	cout << "Destructor Sw called\n";
+;
 }
 Lh::Lh() : I_Format("lh") {}
 string Lh::getName() {
@@ -887,7 +935,7 @@ void Lh::execute() {
     }
 }
 Lh::~Lh() {
-	cout << "Destructor Lh called\n";
+;
 }
 Sh::Sh() : I_Format("sh") {}
 string Sh::getName() {
@@ -900,7 +948,7 @@ void Sh::execute() {
     }
 }
 Sh::~Sh() {
-	cout << "Destructor Sh called\n";
+;
 }
 Lb::Lb() : I_Format("lb") {}
 string Lb::getName() {
@@ -915,7 +963,7 @@ void Lb::execute() {
     }
 }
 Lb::~Lb() {
-	cout << "Destructor Lb called\n";
+;
 }
 Sb::Sb() : I_Format("sb") {}
 string Sb::getName() {
@@ -928,7 +976,7 @@ void Sb::execute() {
     }
 }
 Sb::~Sb() {
-	cout << "Destructor Sb called\n";
+;
 }
 
 Swc1::Swc1() : I_Format("swc1") {}
@@ -946,7 +994,7 @@ void Swc1::execute() {
     }
 }
 Swc1::~Swc1() {
-	cout << "Destructor Swc1 called\n";
+;
 }
 
 Lwc1::Lwc1() : I_Format("lwc1") {}
@@ -965,7 +1013,7 @@ void Lwc1::execute() {
     }
 }
 Lwc1::~Lwc1() {
-	cout << "Destructor Lwc1 called\n";
+;
 }
 Bgez::Bgez() : I_Format("bgez") {}
 string Bgez::getName() {
@@ -975,7 +1023,7 @@ void Bgez::execute() {
     if (reg.getRegisterValue(rs) >= 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
 }
 Bgez::~Bgez() {
-	cout << "Destructor Bgez called\n";
+;
 }
 Beqz::Beqz() : I_Format("beqz") {}
 string Beqz::getName() {
@@ -985,7 +1033,7 @@ void Beqz::execute() {
     if (reg.getRegisterValue(rs) == 0) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
 }
 Beqz::~Beqz() {
-	cout << "Destructor Beqz called\n";
+;
 }
 Bgt::Bgt() : I_Format("bgt") {}
 string Bgt::getName() {
@@ -995,27 +1043,35 @@ void Bgt::execute() {
     if (reg.getRegisterValue(rs) > reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
 }
 Bgt::~Bgt() {
-	cout << "Destructor Bgt called\n";
+;
 }
 Bge::Bge() : I_Format("bge") {}
 string Bge::getName() {
 	return this->NAME;
 }
 void Bge::execute() {
-    if (reg.getRegisterValue(rs) >= reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+    if (rt.compare("")){
+        if (reg.getRegisterValue(rs) >= reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+    }
+    else if (reg.getRegisterValue(rs) >= imm) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
 }
 Bge::~Bge() {
-	cout << "Destructor Bge called\n";
+;
 }
 Blt::Blt() : I_Format("blt") {}
 string Blt::getName() {
 	return this->NAME;
 }
 void Blt::execute() {
-    if (reg.getRegisterValue(rs) < reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+    if (rt.compare("")) {
+        if (reg.getRegisterValue(rs) < reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+    }
+    else if (reg.getRegisterValue(rs) < imm) {
+        reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
+    }
 }
 Blt::~Blt() {
-	cout << "Destructor Blt called\n";
+;
 }
 Ble::Ble() : I_Format("ble") {}
 string Ble::getName() {
@@ -1025,7 +1081,7 @@ void Ble::execute() {
     if (reg.getRegisterValue(rs) <= reg.getRegisterValue(rt)) reg.setRegisterValue("pc", fileIn.getLabelAddress(label) - 4);
 }
 Ble::~Ble() {
-	cout << "Destructor Ble called\n";
+	;
 }
 #pragma endregion I-Format Command Implementation
 #pragma region J-Format Command Implementation
@@ -1046,7 +1102,7 @@ string Jal::getName(){
 }
 void Jal::execute(){
     int labelJump = fileIn.getLabelAddress(nameLabel);
-    reg.setRegisterValue("$ra", reg.getRegisterValue("pc") + 4);
+    reg.setRegisterValue("$ra", reg.getRegisterValue("pc"));
     cmd.write("$ra", reg.getRegisterValue("$ra"));
     reg.setRegisterValue("pc",labelJump - 4);
     cmd.write("pc", reg.getRegisterValue("pc"));
