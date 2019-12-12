@@ -51,6 +51,7 @@ void Coproc::init() {
     }
 }
 void Coproc::setCoprocAddress(string registerName, float* ptr) {
+    registerName = getWord(registerName, 1);
     CoprocNode* seeker;
     seeker = root;
     while(seeker != nullptr) {
@@ -62,6 +63,7 @@ void Coproc::setCoprocAddress(string registerName, float* ptr) {
     }
 }
 void Coproc::setCoprocValue(string registerName, float _value) {
+    registerName = getWord(registerName, 1);
     CoprocNode* seeker;
     seeker = root;
     while(seeker != nullptr) {
@@ -73,6 +75,7 @@ void Coproc::setCoprocValue(string registerName, float _value) {
     }
 }
 float* Coproc::getCoprocAddressValue(string registerName) {
+    registerName = getWord(registerName, 1);
     CoprocNode* seeker;
     seeker = root;
     while(seeker != nullptr) {
@@ -84,6 +87,7 @@ float* Coproc::getCoprocAddressValue(string registerName) {
     return nullptr;
 }
 float Coproc::getCoprocValue(string registerName) {
+    registerName = getWord(registerName, 1);
     CoprocNode* seeker;
     seeker = root;
     while(seeker != nullptr) {

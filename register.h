@@ -51,6 +51,7 @@ void Register::init() {
     }
 }
 void Register::setRegisterAddress(string registerName, int* ptr) {
+    registerName = getWord(registerName, 1);
     RegisterNode* seeker;
     seeker = root;
     while(seeker->next != nullptr) {
@@ -62,9 +63,10 @@ void Register::setRegisterAddress(string registerName, int* ptr) {
     }
 }
 void Register::setRegisterValue(string registerName, int _value) {
+    registerName = getWord(registerName, 1);
     RegisterNode* seeker;
     seeker = root;
-    while(seeker->next != nullptr) {
+    while(seeker != nullptr) {
         if(!seeker->name.compare(registerName)) {
             seeker->value = _value;
             seeker->address = (int*)seeker->value;
@@ -73,9 +75,10 @@ void Register::setRegisterValue(string registerName, int _value) {
     }
 }
 int* Register::getAddressValue(string registerName) {
+    registerName = getWord(registerName, 1);
     RegisterNode* seeker;
     seeker = root;
-    while(seeker->next != nullptr) {
+    while(seeker != nullptr) {
         if(!seeker->name.compare(registerName)) {
             return seeker->address;
         }
@@ -84,9 +87,10 @@ int* Register::getAddressValue(string registerName) {
     return nullptr;
 }
 int Register::getRegisterValue(string registerName) {
+    registerName = getWord(registerName, 1);
     RegisterNode* seeker;
     seeker = root;
-    while(seeker->next != nullptr) {
+    while(seeker != nullptr) {
         if(!seeker->name.compare(registerName)) {
             return seeker->value;
         }

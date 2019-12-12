@@ -22,7 +22,7 @@ protected:
         Data* next = nullptr;
     };
 	string linkFile;
-	string text[100];
+	string text[1000];
 	int numberOfInstruction = 0;
     FileAssembly::Label* labelRoot = nullptr;
     Data* dataRoot = nullptr;
@@ -49,11 +49,6 @@ void FileAssembly::loadLink(string _linkFile) {
                 if (!(getWord(temp, 1) == "")){
                     if (!(getWord(temp,2) == "") || !(getWord(temp, 1).compare("syscall"))){
                         text[i] = temp;
-                        if (int(text[i].find(":")) >= 0){
-                            for (int j = 0; j <= int(text[i].find(":")); j++){
-                                text[i][j] = ' ';
-                            }
-                        }
                         if (int(text[i].find("#")) >= 0){
                                 int j = (int)(text[i].find("#"));
 								while (text[i][j] !=  '\0'){
@@ -61,6 +56,11 @@ void FileAssembly::loadLink(string _linkFile) {
                                     j++;
                                 }
 							}
+                        if (int(text[i].find(":")) >= 0){
+                            for (int j = 0; j <= int(text[i].find(":")); j++){
+                                text[i][j] = ' ';
+                            }
+                        }
                         if (getWord(text[i], 1) != "") i++;
                     }
                 }
@@ -82,9 +82,9 @@ void FileAssembly::loadLink(string _linkFile) {
     while(!fileIn.eof()) {
         getline(fileIn, offsetLine);
         string word1 = getWord(offsetLine, 1);
-        if((int)word1.find("#") != -1) word1 = "";
-        if((int)offsetLine.find(":") == -1 && word1.compare("")) countAddress++;
-        if((int)offsetLine.find(":") != -1) {
+
+        if((int)offsetLine.find(":") == -1 && word1.compare("") && word1.find("#") == -1) countAddress++;
+        if((int)offsetLine.find(":") != -1 && word1.find("#") == -1) {
 
             string label = getWord(offsetLine, 1);
             if(labelRoot == nullptr) {
@@ -105,7 +105,7 @@ void FileAssembly::loadLink(string _linkFile) {
                 }
             }
             string word2 = getWord(offsetLine, 2);
-            if(word2.compare("")) countAddress++;
+            if(word2.compare("") && word2.find("#") == -1) countAddress++;
         }
     }
     Label* seeker = labelRoot;
@@ -161,33 +161,31 @@ void FileAssembly::loadLink(string _linkFile) {
                 countPtr++;
             }
             else if (!getWord(stringLine,2).compare(".asciiz")) {
-                while (stringLine[countString] != '\0') {
-                    if (stringLine[countString] == '\"') break;
-                    countString++;
-                }
-                countString++;
-                string stringIn = "";
-                for ( int i = countString ; ; i++) {
-                    if (stringLine[i] == '\"') break;
-                    stringIn += stringLine[countString];
-                    countString++;
-                }
-                countString++;
-                int count = 0;
-                while (stringIn[count] != '\0') {
-                    if (stringIn[count] == '\0') break;
-                    else if ( stringIn[count] == '\\' && stringIn[count+1] == 'n') {
-                        stringIn[count] = '\n';
-                        stringIn.erase(stringIn.begin() + (count + 1));
-                    }
-                    else if ( stringIn[count] == '\\' && stringIn[count+1] == 't') {
-                        stringIn[count] = '\t';
-                        stringIn.erase(stringIn.begin() + (count + 1));
-                    }
-                    count++;        
-                }
-                *((string*)dataRoot->ptrData + countPtr) = stringIn;
-                //*((string*)dataRoot->ptrData + countPtr) = getWord(stringLine, i);
+                // while (stringLine[countString] != '\0') {
+                //     if (stringLine[countString] == '\"') break;
+                //     countString++;
+                // }
+                // countString++;
+                // string stringIn = "";
+                // while ( stringLine[countString] != '\"') {
+                //     stringIn += stringLine[countString];
+                //     countString++;
+                // }
+                // countString++;
+                // int count = 0;
+                // while (stringIn[count] != '\0') {
+                //     if ( stringIn[count] == '\\' && stringIn[count+1] == 'n') {
+                //         stringIn[count] = '\n';
+                //         stringIn.erase(stringIn.begin() + (count + 1));
+                //     }
+                //     else if ( stringIn[count] == '\\' && stringIn[count+1] == 't') {
+                //         stringIn[count] = '\t';
+                //         stringIn.erase(stringIn.begin() + (count + 1));
+                //     }
+                //     count++;        
+                // }
+                //*((string*)dataRoot->ptrData + countPtr) = stringIn;
+                *((string*)dataRoot->ptrData + countPtr) = getWord(stringLine, i);
                 countPtr++;
             }
             else if(!getWord(stringLine,2).compare(".byte")) {
@@ -205,6 +203,7 @@ string FileAssembly::getInstruction(int address){
 	else return "";
 }
 int FileAssembly::getLabelAddress(string _label) {
+    _label = getWord(_label, 1);
     Label* seeker = labelRoot;
     while(seeker != nullptr){
         if(!seeker->labelName.compare(_label)) return seeker->labelAddress;

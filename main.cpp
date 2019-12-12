@@ -6,7 +6,7 @@ Instruction* navigationCommand(string _instruction){
     string name = getWord(_instruction, 1);
     if(!name.compare("add")) return new Add;
     else if (!name.compare("abs")) return new Absolute;
-    else if(!name.compare("subtract")) return new Subtract;
+    else if(!name.compare("sub")) return new Subtract;
     else if(!name.compare("and")) return new And;
     else if(!name.compare("or")) return new Or;
     else if(!name.compare("xor")) return new Xor;
@@ -18,6 +18,7 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("mfhi")) return new Mfhi;
     else if(!name.compare("mflo")) return new Mflo;
     else if(!name.compare("sltu")) return new Sltu;
+    else if(!name.compare("slt")) return new Sltu;
     else if(!name.compare("mtc1")) return new Mtc1;
     else if(!name.compare("mfc1")) return new Mfc1;
     else if(!name.compare("move")) return new Move;
@@ -55,22 +56,8 @@ void setup() {
 
 // Replace int main() with int process()
 int main(int argc, char* argv[]){
-
-    if(argc == 1) {
-        cout << "You must type the input file\n";
-        return 0;
-    }
-    ifstream checkValidFile;
-    checkValidFile.open(argv[1]);
-    if(checkValidFile.is_open() == 0) {
-        cout << "No file name: " << argv[1] <<'\n';
-        checkValidFile.close();
-        return 0;
-    }
-    checkValidFile.close();
-
     // START HERE
-    fileIn.loadLink(argv[1]);
+    fileIn.loadLink("testAssembly.txt");
     setup();
     while(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
         string instruction = fileIn.getInstruction(reg.getRegisterValue("pc"));
@@ -78,6 +65,7 @@ int main(int argc, char* argv[]){
         cout << "------------------------------------------------------" <<'\n';
         cout << "Next Command: " << optimizeString(instruction) << '\n';
         cout << "------------------------------------------------------" << '\n';
+        cmd.pause();
         Instruction* ptr = navigationCommand(instruction);
         if(ptr != nullptr) {
             ptr->init(instruction);
@@ -87,11 +75,17 @@ int main(int argc, char* argv[]){
         if(fileIn.getInstruction(reg.getRegisterValue("pc")).compare("")) {
             cmd.write("pc", reg.getRegisterValue("pc"));
         }
-        cmd.pause();
+
         if(isExit == 1) break;
         cmd.print();
         cout << sys.consoleField << '\n';
+        delete ptr;
     }
+    // int a = 0;
+    // cin >> a;
+    // cout << fileIn.getLabelAddress("Sign") << '\n';
+    // cout << fileIn.getLabelAddress("trans") << '\n';
+    // cout << fileIn.getInstruction(a) << '\n';
     cout << "------------------------------------------------------" << '\n';
     cout << "PROGRAM HAS ENDED!!" << '\n';
     cout << "------------------------------------------------------" << '\n';
