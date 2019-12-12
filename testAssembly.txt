@@ -1,7 +1,29 @@
 .data
-	a: .word 2,4
-	b: .float 3
+	textA: .asciiz "+ Nhap so a = "
+	textB: .asciiz "+ Nhap so b = "
+	soA: .float 0
+	soB: .float 0
+	kq1: 	.asciiz "a + b = "
+	kq2: 	.asciiz "a - b = "
 .text
-	li $t1, 1
-	lwc1 $f1, b
-	mov.s $f1, $f2
+     #Nhap so thu nhat
+	la $a0,textA 
+	li $v0,4
+	syscall
+	li $v0,6
+	syscall 
+	swc1 $f0,soA	
+    #Nhap so thu 2
+	la $a0,textB 
+	li $v0,4
+	syscall
+	li $v0,6
+	syscall
+	swc1 $f0,soB
+	 #Chuyen du lieu sang ma nhi phan
+	 lw $a1,soA
+	lw $a2,soBs
+	li $t1, 200
+	#Tach cac truong cua ma nhi phan 32 bit
+    	srl $t1,$a1,31			#truong sign cua so A = $t1
+    	srl $t2,$a2,31			#truong sign cua so B = $t2

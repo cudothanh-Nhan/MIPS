@@ -22,7 +22,7 @@ protected:
         Data* next = nullptr;
     };
 	string linkFile;
-	string text[100];
+	string text[200];
 	int numberOfInstruction = 0;
     FileAssembly::Label* labelRoot = nullptr;
     Data* dataRoot = nullptr;
