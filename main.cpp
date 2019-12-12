@@ -4,9 +4,9 @@ using namespace std;
 
 Instruction* navigationCommand(string _instruction){
     string name = getWord(_instruction, 1);
-    if(!name.compare("add")) return new Add;
+    if(!name.compare("add") || (!name.compare("addu"))) return new Add;
     else if (!name.compare("abs")) return new Absolute;
-    else if(!name.compare("sub")) return new Subtract;
+    else if(!name.compare("sub") || (!name.compare("subu"))) return new Subtract;
     else if(!name.compare("and")) return new And;
     else if(!name.compare("or")) return new Or;
     else if(!name.compare("xor")) return new Xor;
@@ -23,7 +23,7 @@ Instruction* navigationCommand(string _instruction){
     else if(!name.compare("mfc1")) return new Mfc1;
     else if(!name.compare("move")) return new Move;
     else if(!name.compare("mov.s")) return new MoveS;
-    else if(!name.compare("addi")) return new Addi;
+    else if(!name.compare("addi") || !name.compare("addiu")) return new Addi;
     else if(!name.compare("subi")) return new Subi;
     else if(!name.compare("andi")) return new Andi;
     else if(!name.compare("ori")) return new Ori;
@@ -31,6 +31,12 @@ Instruction* navigationCommand(string _instruction){
 	else if(!name.compare("li")) return new Li;
     else if(!name.compare("beq")) return new Beq;
     else if(!name.compare("bne")) return new Bne;
+    else if(!name.compare("bgez")) return new Bgez;
+    else if(!name.compare("beqz")) return new Beqz;
+    else if(!name.compare("bgt")) return new Bgt;
+    else if(!name.compare("bge")) return new Bge;
+    else if(!name.compare("blt")) return new Blt;
+    else if(!name.compare("ble")) return new Ble;
     else if(!name.compare("la")) return new La;
     else if(!name.compare("lw")) return new Lw;
     else if(!name.compare("sw")) return new Sw;

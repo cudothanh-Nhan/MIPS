@@ -22,7 +22,11 @@ protected:
         Data* next = nullptr;
     };
 	string linkFile;
+<<<<<<< HEAD
+	string text[200];
+=======
 	string text[1000];
+>>>>>>> 4aae44e25dfb53934098d92cbfbf682813e41586
 	int numberOfInstruction = 0;
     FileAssembly::Label* labelRoot = nullptr;
     Data* dataRoot = nullptr;
@@ -40,7 +44,7 @@ void FileAssembly::loadLink(string _linkFile) {
     int i = 0;
     string temp;
     ifstream fileIn;
-    fileIn.open(_linkFile);
+    fileIn.open(_linkFile, ios::binary);
     while (!fileIn.eof()){
         getline(fileIn, temp);
         if (int(temp.find(".text")) >= 0){
